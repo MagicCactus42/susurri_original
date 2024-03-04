@@ -1,12 +1,20 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
-using System.Threading.Tasks;
 
-namespace Susurri.Hubs;
+namespace Susurri.Api.Hubs;
 
-public class ChatHub : Hub
+[Authorize]
+public class ChatHub : Hub<INotificationClient>
 {
-    public Task SendMessage(string user, string message)
+    public override async Task OnConnectedAsync()
     {
-        return Clients.All.SendAsync("ReceiveMessage", user, message);
+        await Clients.Client(Context.ConnectionId).ReceiveNotification(
+            $"Thank you for connecting {Context.User?.Identity?.Name}");
+        
+        await base.OnConnectedAsync();
     }
+}
+public interface INotificationClient
+{
+    Task ReceiveNotification(string message);
 }
