@@ -15,6 +15,6 @@ public class ChatHub : Hub<INotificationClient>
     }
 }
 public interface INotificationClient
-{
+{ 
     Task ReceiveNotification(string message);
 }

@@ -23,13 +23,13 @@ Messages from server
 
     protected override async Task OnInitializedAsync()
     {
-        _hubConnection = new HubConnectionBuilder().WithUrl("https://localhost:5044/Chat",
-            o => o.AccessTokenProvider = () => Task.FromResult<string?>("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6Ik1pY2hhIiwic3ViIjoiTWljaGEiLCJqdGkiOiJiYzZkZWQzNiIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjI1MjEzIiwiaHR0cHM6Ly9sb2NhbGhvc3Q6NDQzMDQiLCJodHRwOi8vbG9jYWxob3N0OjUwNDQiLCJodHRwczovL2xvY2FsaG9zdDo3MDgzIl0sIm5iZiI6MTcwOTQ5MTI4NCwiZXhwIjoxNzE3NDQwMDg0LCJpYXQiOjE3MDk0OTEyODQsImlzcyI6ImRvdG5ldC11c2VyLWp3dHMifQ.uyzP3K4WkkyLykpUuvZ-BBj8eaXSONhD5cmlNg0ot40"))
+        _hubConnection = new HubConnectionBuilder().WithUrl("http://localhost:5044/Chat",
+            o => o.AccessTokenProvider = () => Task.FromResult<string?>("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6Ik1pY2hhIiwic3ViIjoiTWljaGEiLCJqdGkiOiI5MDJlOTA4ZCIsImF1ZCI6WyJodHRwOi8vbG9jYWxob3N0OjI1MjEzIiwiaHR0cHM6Ly9sb2NhbGhvc3Q6NDQzMDQiLCJodHRwOi8vbG9jYWxob3N0OjUwNDQiLCJodHRwczovL2xvY2FsaG9zdDo3MDgzIl0sIm5iZiI6MTcwOTU3MjgyNywiZXhwIjoxNzE3NTIxNjI3LCJpYXQiOjE3MDk1NzI4MjgsImlzcyI6ImRvdG5ldC11c2VyLWp3dHMifQ.OmIooqtE1L5s54As-ctb5FuBVZsrOL3NzKa-pZ0h4tw"))
             .Build();
 
         _hubConnection.On<string>("ReceiveNotification", message =>
         {
-            _messages.Add((message));
+            _messages.Add(message);
 
             InvokeAsync(StateHasChanged);
         });

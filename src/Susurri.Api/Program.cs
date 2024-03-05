@@ -31,7 +31,7 @@ app.UseAuthorization();
 app.UseHttpsRedirection();
 
 app.MapRazorPages();
-app.MapHub<ChatHub>("/Chat");
+app.MapHub<ChatHub>("Chat");
 
 
 app.Run();
