@@ -6,6 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+builder.Services.AddRazorComponents(options => 
+    options.DetailedErrors = builder.Environment.IsDevelopment());
 
 var app = builder.Build();
 
