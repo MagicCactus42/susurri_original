@@ -2,15 +2,14 @@
 @inject IHostEnvironment HostEnvironment
 
 
-...
 
-<ErrorBoundary @ref="errorBoundary">
     @Body
-</ErrorBoundary>
+    
+    <MudThemeProvider/>
+    <MudDialogProvider/>
+    <MudSnackbarProvider/>
 
-...
-
-@code {
+    @code {
     private ErrorBoundary? errorBoundary;
 
     protected override void OnParametersSet()
@@ -18,7 +17,6 @@
         errorBoundary?.Recover();
     }
 }
-
 
 <div class="page">
     <div class="sidebar">

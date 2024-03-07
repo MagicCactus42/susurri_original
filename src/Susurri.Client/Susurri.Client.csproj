@@ -11,12 +11,14 @@
     <ItemGroup>
       <PackageReference Include="Microsoft.AspNet.SignalR" Version="2.4.3" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.2" />
+      <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.2" />
       <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.2" />
       <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.2" />
       <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="9.0.0-preview.1.24081.5">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+      <PackageReference Include="MudBlazor" Version="6.17.0" />
       <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
       <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.5.0" />
       <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
