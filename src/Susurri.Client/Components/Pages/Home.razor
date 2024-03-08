@@ -2,15 +2,6 @@
 @using Microsoft.AspNetCore.SignalR.Client
 @implements IAsyncDisposable
 
-<PageTitle>Home</PageTitle>
-
-
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
-
-Messages from server
-
 <ul>
     @foreach (var message in _messages)
     {
@@ -24,10 +15,11 @@ Messages from server
 
     private async Task StartHubConnection()
     {
-        var apiAdress = "https://localhost:7083";
+        var apiAdress = "https://localhost:5050";
 
         var sensorDataUrl = ($"{apiAdress}/Chat");
         _hubConnection = new HubConnectionBuilder().WithUrl(sensorDataUrl).Build();
+        await _hubConnection.StartAsync();
     }
 
     public async ValueTask DisposeAsync()

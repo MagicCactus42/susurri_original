@@ -14,7 +14,3 @@ public class ChatHub : Hub<INotificationClient>
         await base.OnConnectedAsync();
     }
 }
-public interface INotificationClient
-{ 
-    Task ReceiveNotification(string message);
-}
