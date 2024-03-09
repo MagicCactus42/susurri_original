@@ -1,13 +1,13 @@
 ﻿@inherits LayoutComponentBase
-@inject IHostEnvironment HostEnvironment
 
-<MudThemeProvider />
-<MudDialogProvider />
-<MudSnackbarProvider />
+
+<MudThemeProvider/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
 
 <MudLayout>
     <MudAppBar Elevation="1">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer"/>
     </MudAppBar>
     <MudDrawer @bind-Open="@_open" Elevation="1">
         <MudNavMenu>
@@ -30,10 +30,11 @@
 
 
 @code{
-    bool _open = false;
+    bool _open;
 
     void ToggleDrawer()
     {
         _open = !_open;
     }
+
 }

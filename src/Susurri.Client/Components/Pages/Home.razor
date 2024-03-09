@@ -8,6 +8,7 @@
         <li>@message</li>
     }
 </ul>
+
 @code
 {
     private HubConnection? _hubConnection;
@@ -17,7 +18,7 @@
     {
         var apiAdress = "https://localhost:5050";
 
-        var sensorDataUrl = ($"{apiAdress}/Chat");
+        var sensorDataUrl = $"{apiAdress}/Chat";
         _hubConnection = new HubConnectionBuilder().WithUrl(sensorDataUrl).Build();
         await _hubConnection.StartAsync();
     }

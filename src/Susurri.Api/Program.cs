@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.ResponseCompression;
 using MudBlazor;
 using MudBlazor.Services;
-
 using Susurri.Api;
 using Susurri.Api.Hubs;
 
@@ -24,16 +22,12 @@ builder.Services.AddScoped<MudDialogProvider>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseResponseCompression();
-}
+if (!app.Environment.IsDevelopment()) app.UseResponseCompression();
 
 app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
 app.UseAuthorization();
 app.UseHttpsRedirection();
-
 
 
 app.MapRazorPages();

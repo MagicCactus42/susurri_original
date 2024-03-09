@@ -6,8 +6,8 @@ namespace Susurri.Api;
 public class ServerTimeNotifier : BackgroundService
 {
     private static readonly TimeSpan Period = TimeSpan.FromSeconds(5);
-    private readonly ILogger<ServerTimeNotifier> _logger;
     private readonly IHubContext<ChatHub, INotificationClient> _context;
+    private readonly ILogger<ServerTimeNotifier> _logger;
 
     public ServerTimeNotifier(ILogger<ServerTimeNotifier> logger, IHubContext<ChatHub, INotificationClient> context)
     {
@@ -23,10 +23,9 @@ public class ServerTimeNotifier : BackgroundService
                await timer.WaitForNextTickAsync(stoppingToken))
         {
             var dateTime = DateTime.Now;
-            
+
             _logger.LogInformation("Executing {Service} {Time}", nameof(ServerTimeNotifier), dateTime);
             await _context.Clients.User("").ReceiveNotification($"Server time = {dateTime}");
         }
-        
     }
 }

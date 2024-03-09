@@ -10,7 +10,7 @@ public class ChatHub : Hub<INotificationClient>
     {
         await Clients.Client(Context.ConnectionId).ReceiveNotification(
             $"Thank you for connecting {Context.User?.Identity?.Name}");
-        
+
         await base.OnConnectedAsync();
     }
 }
