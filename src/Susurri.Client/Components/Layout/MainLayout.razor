@@ -13,12 +13,12 @@
     </MudAppBar>
     <MudDrawer @bind-Open="@_open" Elevation="1">
         <MudDrawerHeader>
-            <MudText Typo="Typo.h6">My App</MudText>
+            <MudText Typo="Typo.h6">Susurri</MudText>
         </MudDrawerHeader>
         <MudNavMenu>
-            <MudNavLink Match="NavLinkMatch.All">Store</MudNavLink>
-            <MudNavLink Match="NavLinkMatch.All">Library</MudNavLink>
-            <MudNavLink Match="NavLinkMatch.All">Community</MudNavLink>
+            <MudNavLink Href="/" Match="NavLinkMatch.All">Home</MudNavLink>
+            <MudNavLink Href="/Counter" Match="NavLinkMatch.Prefix">Counter</MudNavLink>
+            <MudNavLink Href="/Weather" Match="NavLinkMatch.Prefix">Weather</MudNavLink>
         </MudNavMenu>
     </MudDrawer>
     <MudMainContent Class="pt-16 px-16">
