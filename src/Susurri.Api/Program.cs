@@ -19,6 +19,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<IDialogService>();
 builder.Services.AddScoped<MudDialogProvider>();
 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

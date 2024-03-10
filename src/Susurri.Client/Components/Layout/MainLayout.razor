@@ -1,40 +1,39 @@
 ﻿@inherits LayoutComponentBase
 
 
-<MudThemeProvider/>
-<MudDialogProvider/>
-<MudSnackbarProvider/>
+<MudThemeProvider @rendermode="InteractiveServer" />
+<MudDialogProvider @rendermode="InteractiveServer" />
+<MudSnackbarProvider @rendermode="InteractiveServer" />
 
 <MudLayout>
     <MudAppBar Elevation="1">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer"/>
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/MudBlazor/MudBlazor" Target="_blank" />
     </MudAppBar>
     <MudDrawer @bind-Open="@_open" Elevation="1">
+        <MudDrawerHeader>
+            <MudText Typo="Typo.h6">My App</MudText>
+        </MudDrawerHeader>
         <MudNavMenu>
-            <MudPaper Width="250px" Class="py-3" Elevation="0">
-                <MudNavMenu>
-                    <MudText Typo="Typo.h6" Class="px-4">My Application</MudText>
-                    <MudDivider Class="my-2"/>
-                    <MudNavLink Href="/">Home</MudNavLink>
-                    <MudNavLink Href="/chat">Chat</MudNavLink>
-                    <MudNavGroup Title="Settings" Expanded="true">
-                        <MudNavLink Href="/users">Users</MudNavLink>
-                        <MudNavLink Href="/security">Security</MudNavLink>
-                    </MudNavGroup>
-                    <MudNavLink Href="/about">About</MudNavLink>
-                </MudNavMenu>
-            </MudPaper>
+            <MudNavLink Match="NavLinkMatch.All">Store</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All">Library</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All">Community</MudNavLink>
         </MudNavMenu>
     </MudDrawer>
+    <MudMainContent Class="pt-16 px-16">
+        <MudContainer Class="mt-6">
+            <MudAlert Severity="Severity.Success" Class="mt-16">Text inside MudContainer</MudAlert>
+        </MudContainer>
+    </MudMainContent>
 </MudLayout>
 
 
 @code{
-    bool _open;
+    bool _open = false;
 
     void ToggleDrawer()
     {
         _open = !_open;
     }
-
 }

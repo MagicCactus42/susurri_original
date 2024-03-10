@@ -4,8 +4,9 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <RootNamespace>BlazorApp1</RootNamespace>
+        <RootNamespace>Susurri.Client</RootNamespace>
         <UserSecretsId>f82a7a4f-22d6-4d46-bdca-63a762f210b7</UserSecretsId>
+	<NoWarn>NU1701</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
