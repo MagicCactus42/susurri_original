@@ -8,6 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services
+    .AddRazorComponents()
+    .AddInteractiveServerComponents();
+    
 builder.Services.AddSignalR();
 builder.Services.AddHostedService<ServerTimeNotifier>();
 builder.Services.AddCors();
@@ -30,8 +34,6 @@ app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin())
 app.UseAuthorization();
 app.UseHttpsRedirection();
 
-
-app.MapRazorPages();
 app.MapHub<ChatHub>("/Chat");
 
 

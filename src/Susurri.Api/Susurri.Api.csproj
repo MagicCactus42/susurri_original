@@ -26,10 +26,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Models\"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <_ContentIncludedByDefault Remove="wwwroot\chat.html"/>
         <_ContentIncludedByDefault Remove="wwwroot\chat.js"/>
         <_ContentIncludedByDefault Remove="wwwroot\css\site.css"/>
@@ -92,6 +88,9 @@
         <_ContentIncludedByDefault Remove="wwwroot\lib\jquery\dist\jquery.min.js"/>
         <_ContentIncludedByDefault Remove="wwwroot\lib\jquery\dist\jquery.min.map"/>
         <_ContentIncludedByDefault Remove="wwwroot\lib\jquery\LICENSE.txt"/>
+        <_ContentIncludedByDefault Remove="Components\App.razor" />
+        <_ContentIncludedByDefault Remove="Components\Pages\Error.razor" />
+        <_ContentIncludedByDefault Remove="Components\_Imports.razor" />
     </ItemGroup>
 
 </Project>
