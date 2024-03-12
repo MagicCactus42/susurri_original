@@ -17,20 +17,20 @@
         </MudDrawerHeader>
         <MudNavMenu>
             <MudNavLink Href="/" Match="NavLinkMatch.All">Home</MudNavLink>
-            <MudNavLink Href="/Counter" Match="NavLinkMatch.Prefix">Counter</MudNavLink>
-            <MudNavLink Href="/Weather" Match="NavLinkMatch.Prefix">Weather</MudNavLink>
+            <MudNavLink Href="/Chats" Match="NavLinkMatch.Prefix">Chats</MudNavLink>
+            <MudNavLink Href="/Account" Match="NavLinkMatch.Prefix">Account</MudNavLink>
         </MudNavMenu>
     </MudDrawer>
     <MudMainContent Class="pt-16 px-16">
         <MudContainer Class="mt-6">
-            <MudAlert Severity="Severity.Success" Class="mt-16">Text inside MudContainer</MudAlert>
+            <MudAlert Severity="Severity.Success" Class="mt-16">Welcome to Susurri B)</MudAlert>
         </MudContainer>
     </MudMainContent>
 </MudLayout>
 
 
 @code{
-    bool _open = false;
+    bool _open = true;
 
     void ToggleDrawer()
     {
