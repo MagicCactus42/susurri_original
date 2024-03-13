@@ -91,6 +91,10 @@
         <_ContentIncludedByDefault Remove="Components\App.razor" />
         <_ContentIncludedByDefault Remove="Components\Pages\Error.razor" />
         <_ContentIncludedByDefault Remove="Components\_Imports.razor" />
+        <_ContentIncludedByDefault Remove="wwwroot\app.css" />
+        <_ContentIncludedByDefault Remove="wwwroot\bootstrap\bootstrap.min.css" />
+        <_ContentIncludedByDefault Remove="wwwroot\bootstrap\bootstrap.min.css.map" />
+        <_ContentIncludedByDefault Remove="wwwroot\favicon.png" />
     </ItemGroup>
 
 </Project>

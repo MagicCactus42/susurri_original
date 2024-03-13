@@ -1,39 +1,39 @@
-﻿@inherits LayoutComponentBase
-@rendermode InteractiveServer
+﻿@using Susurri.Client.Components
+@inherits LayoutComponentBase
 
-<MudThemeProvider @rendermode="InteractiveServer" />
-<MudDialogProvider @rendermode="InteractiveServer" />
-<MudSnackbarProvider @rendermode="InteractiveServer" />
+<MyMudThemeProvider />
 
-<MudLayout>
-    <MudAppBar Elevation="1">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
-        <MudSpacer />
-        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/MudBlazor/MudBlazor" Target="_blank" />
-    </MudAppBar>
-    <MudDrawer @bind-Open="@_open" Elevation="1">
-        <MudDrawerHeader>
-            <MudText Typo="Typo.h6">Susurri</MudText>
-        </MudDrawerHeader>
-        <MudNavMenu>
-            <MudNavLink Href="/" Match="NavLinkMatch.All">Home</MudNavLink>
-            <MudNavLink Href="/Chats" Match="NavLinkMatch.Prefix">Chats</MudNavLink>
-            <MudNavLink Href="/Account" Match="NavLinkMatch.Prefix">Account</MudNavLink>
-        </MudNavMenu>
-    </MudDrawer>
-    <MudMainContent Class="pt-16 px-16">
-        <MudContainer Class="mt-6">
-            <MudAlert Severity="Severity.Success" Class="mt-16">Welcome to Susurri B)</MudAlert>
+<div class="page mud-layout">
+
+    <div class="sidebar mud-elevation-1">
+        <div class="top-row mud-drawer-head">
+            <div>
+                <a class="navbar-brand" href="https://mudblazor.com/" target="_blank">MudBlazor</a>
+            </div>
+        </div>
+
+        <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+        <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+            <NavMenu />
+        </div>
+
+    </div>
+
+     <main>
+        <div class="top-row px-4">
+            <MudIconButton Icon="@Icons.Custom.Brands.MudBlazor" Style="color: white;" Link="https://mudblazor.com/" Target="_blank" />
+            <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Style="color: white;" Link="https://github.com/MudBlazor/MudBlazor/" Target="_blank" />
+        </div>
+
+        <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="my-2 pt-2">
+            @Body
         </MudContainer>
-    </MudMainContent>
-</MudLayout>
+    </main>
+</div>
 
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>
 
-@code{
-    bool _open = true;
-
-    void ToggleDrawer()
-    {
-        _open = !_open;
-    }
-}

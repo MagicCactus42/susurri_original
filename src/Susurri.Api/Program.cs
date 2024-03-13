@@ -19,7 +19,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
 builder.Services.AddMudServices();
-builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<IDialogService>();
 builder.Services.AddScoped<MudDialogProvider>();
 
@@ -34,7 +33,7 @@ app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin())
 app.UseAuthorization();
 app.UseHttpsRedirection();
 
-app.MapHub<ChatHub>("/Chat");
+
 
 
 app.Run();
