@@ -1,0 +1,52 @@
+@page "/chat"
+@inject NavigationManager NavigationManager
+@rendermode InteractiveWebAssembly
+@using Microsoft.AspNetCore.SignalR.Client
+
+<h3>Chat</h3>
+
+@if (IsConnected)
+{
+    <input type="text" @bind="userInput" />
+    <input type="text" @bind="messageInput" />
+    <button @onclick="Send">Send</button>
+    
+    <ul id="messagesList">
+        @foreach (var message in messages)
+        {
+           <li>@message</li> 
+        }
+    </ul>
+}
+else
+{
+    <span>Connecting...</span>
+}
+
+@code {
+    
+    private HubConnection hubConnection;
+    private List<string> messages = new List<string>();
+    private string userInput;
+    private string messageInput;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/chat")).Build();
+
+        hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+        {
+            var encodedMsg = $"{user}: {message}";
+            messages.Add(encodedMsg);
+            StateHasChanged();
+        });
+
+        await hubConnection.StartAsync();
+    }
+
+    Task Send() => hubConnection.SendAsync("SendMessage", userInput, messageInput);
+
+    public bool IsConnected => hubConnection.State == HubConnectionState.Connected;
+}

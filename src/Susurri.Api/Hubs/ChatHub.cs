@@ -3,14 +3,10 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Susurri.Api.Hubs;
 
-[Authorize]
-public class ChatHub : Hub<INotificationClient>
+public class ChatHub : Hub
 {
-    public override async Task OnConnectedAsync()
+    public async Task SendMessage(string user, string message)
     {
-        await Clients.Client(Context.ConnectionId).ReceiveNotification(
-            $"Thank you for connecting {Context.User?.Identity?.Name}");
-
-        await base.OnConnectedAsync();
+        await Clients.All.SendAsync("ReceiveMessage", user, message);
     }
 }
