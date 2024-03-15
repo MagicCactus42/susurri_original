@@ -1,7 +1,6 @@
 @page "/chat"
 @inject NavigationManager NavigationManager
-@rendermode InteractiveWebAssembly
-@using Microsoft.AspNetCore.SignalR.Client
+
 
 <h3>Chat</h3>
 
@@ -32,10 +31,13 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        
+        
 
         hubConnection = new HubConnectionBuilder()
             .WithUrl(NavigationManager.ToAbsoluteUri("/chat")).Build();
 
+        return;
         hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
         {
             var encodedMsg = $"{user}: {message}";
