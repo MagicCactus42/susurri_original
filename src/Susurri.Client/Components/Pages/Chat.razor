@@ -32,12 +32,9 @@ else
     protected override async Task OnInitializedAsync()
     {
         
-        
-
         hubConnection = new HubConnectionBuilder()
             .WithUrl(NavigationManager.ToAbsoluteUri("/chat")).Build();
-
-        return;
+        
         hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
         {
             var encodedMsg = $"{user}: {message}";

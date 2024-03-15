@@ -13,12 +13,9 @@ builder.Services
     .AddInteractiveServerComponents();
     
 builder.Services.AddSignalR();
-builder.Services.AddHostedService<ServerTimeNotifier>();
 builder.Services.AddCors();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddMudServices();
-builder.Services.AddScoped<IDialogService>();
-builder.Services.AddScoped<MudDialogProvider>();
 
 
 var app = builder.Build();
