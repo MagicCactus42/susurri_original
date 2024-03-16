@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using MudBlazor;
 using MudBlazor.Services;
-using Susurri.Api;
-using Susurri.Api.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,7 +26,6 @@ app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin())
 app.UseAuthorization();
 app.UseHttpsRedirection();
 
-app.MapHub<ChatHub>("/chat");
 
 
 app.Run();

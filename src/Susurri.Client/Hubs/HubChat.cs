@@ -1,7 +1,7 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Susurri.Api.Hubs;
+namespace Susurri.Client.Hubs;
+
 
 public class ChatHub : Hub
 {

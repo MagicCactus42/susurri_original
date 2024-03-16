@@ -1,5 +1,8 @@
 using Susurri.Client.Components;
 using MudBlazor.Services;
+using Microsoft.AspNetCore.ResponseCompression;
+using Susurri.Client.Components.Pages;
+using Susurri.Client.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddResponseCompression(opts =>
+{
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+        new[] { "application/octet-stream" });
+});
 
 builder.Services.AddMudServices();
 
@@ -24,8 +32,10 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
+app.UseResponseCompression();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+app.MapHub<ChatHub>("/chathub");
 
 app.Run();
