@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Susurri.Client.Components.Pages;
 using Susurri.Client.Hubs;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -17,6 +18,7 @@ builder.Services.AddResponseCompression(opts =>
 });
 
 builder.Services.AddMudServices();
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
