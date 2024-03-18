@@ -1,3 +1,148 @@
 @page "/chat"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.SignalR
+@inject NavigationManager Navigation
+@implements IAsyncDisposable
+
 
 <PageTitle>Home</PageTitle>
+
+<div>
+    <div class="form-group">
+        <label>
+            User:
+            <input @bind="User" />
+        </label>
+    </div>
+    <div class="form-group">
+        <label>
+            Message:
+            <input @bind="Message" size="50" />
+        </label>
+    </div>
+    <div>
+        <button class="btn-send-to-caller" @onclick="SendToCaller" disabled="@(!IsConnected)">Send to Caller</button>
+        <button class="btn-send-to-group" @onclick="SendToGroup" disabled="@(!IsConnected)">Send to Group</button>
+    </div>
+</div>
+
+<hr>
+
+<div>
+    <h4>Private Messages</h4>
+    <ul id="messagesListCaller">
+        @foreach (var message in _messagesToCaller)
+        {
+            <li>@message</li>
+        }
+    </ul>
+</div>
+
+<div>
+    <h4>Group Messages</h4>
+    <ul id="messagesListGroup">
+        @foreach (var message in _messagesToGroup)
+        {
+            <li>@message</li>
+        }
+    </ul>
+</div>
+
+@code {
+    private HubConnection? _hubConnection;
+    private string? User { get; set; }
+    private string? Message { get; set; }
+    private List<string> _messagesToCaller = new List<string>();
+    private List<string> _messagesToGroup = new List<string>();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(Navigation.ToAbsoluteUri("/chathub"))
+            .Build();
+        
+        _hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+        {
+            var encodedMsg = $"{user}: {message}";
+            _messagesToCaller.Add(encodedMsg);
+            InvokeAsync(StateHasChanged);
+        });
+        
+        _hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+        {
+            var encodedMsg = $"{user}: {message}";
+            _messagesToGroup.Add(encodedMsg);
+            InvokeAsync(StateHasChanged);
+        });
+        
+        
+        await _hubConnection.StartAsync();
+    }
+
+    private async Task SendMessageToCaller(string user, string message)
+    {
+        if (_hubConnection is not null)
+        {
+            await _hubConnection.InvokeAsync("SendMessageToCaller", user, message);
+        }
+    }
+
+    private async Task SendMessageToGroups(string user, string message)
+    {
+        if (_hubConnection is not null)
+        {
+            await _hubConnection.InvokeAsync("SendMessageToGroups", user, message);
+        }
+    }
+
+    private async Task SendToCaller()
+    {
+        if (!string.IsNullOrEmpty(User) && !string.IsNullOrEmpty(Message))
+        {
+            await SendMessageToCaller(User, Message);
+            _messagesToCaller.Add($"Me: {Message}"); // Add sent message to the list
+            Message = ""; // Clear the message input field after sending
+        }
+    }
+
+    private async Task SendToGroup()
+    {
+        if (!string.IsNullOrEmpty(User) && !string.IsNullOrEmpty(Message))
+        {
+            await SendMessageToGroups(User, Message);
+            _messagesToGroup.Add($"Me: {Message}"); // Add sent message to the list
+            Message = ""; // Clear the message input field after sending
+        }
+    }
+
+    
+    public async Task AddToGroup(string testGroup)
+    {
+        if (_hubConnection is not null)
+        {
+            await _hubConnection.InvokeAsync("AddToGroup", testGroup);
+        }
+    }
+
+    public async Task RemoveFromGroup(string testGroup)
+    {
+        if (_hubConnection is not null)
+        {
+            await _hubConnection.InvokeAsync("RemoveFromGroup", testGroup);
+        }
+    }
+
+    public bool IsConnected =>
+        _hubConnection?.State == HubConnectionState.Connected;
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_hubConnection is not null)
+        {
+            await _hubConnection.DisposeAsync();
+        }
+    }
+
+    public Task ThrowException()
+        => throw new HubException("This error will be sent to the client!");
+}

@@ -29,4 +29,17 @@ public class ChatHub : Hub<IChatClient>
     {
         await base.OnDisconnectedAsync(exception);
     }
+    public async Task AddToGroup(string testGroup)
+    {
+        await Groups.AddToGroupAsync(Context.ConnectionId, testGroup);
+
+        await Clients.Group(testGroup).ReceiveMessage("Send", $"{Context.ConnectionId} has joined the group {testGroup}.");
+    }
+
+    public async Task RemoveFromGroup(string testGroup)
+    {
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, testGroup);
+
+        await Clients.Group(testGroup).ReceiveMessage(testGroup, $"{Context.ConnectionId} has left the group {testGroup}.");
+    }
 }
