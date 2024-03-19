@@ -21,8 +21,10 @@
         </label>
     </div>
     <div>
-        <button class="btn-send-to-caller" @onclick="SendToCaller" disabled="@(!IsConnected)">Send to Caller</button>
-        <button class="btn-send-to-group" @onclick="SendToGroup" disabled="@(!IsConnected)">Send to Group</button>
+        <button class="btn-send-to-caller" @onclick="SendToCaller" disabled="@(!IsConnected)">|Send to Caller|</button>
+        <button class="btn-send-to-group" @onclick="SendToGroup" disabled="@(!IsConnected || !IsInGroup)">|Send to Group|</button>
+        <button class="btn-join-group" @onclick="JoinGroup" disabled="@(!IsConnected)">|Join Group|</button>
+        <button class="btn-join-group" @onclick="LeaveGroup" disabled="@(!IsConnected || !IsInGroup)">|Leave Group|</button>
     </div>
 </div>
 
@@ -31,7 +33,7 @@
 <div>
     <h4>Private Messages</h4>
     <ul id="messagesListCaller">
-        @foreach (var message in _messagesToCaller)
+        @foreach (var message in _privateMessages)
         {
             <li>@message</li>
         }
@@ -41,7 +43,7 @@
 <div>
     <h4>Group Messages</h4>
     <ul id="messagesListGroup">
-        @foreach (var message in _messagesToGroup)
+        @foreach (var message in _groupMessages)
         {
             <li>@message</li>
         }
@@ -52,9 +54,10 @@
     private HubConnection? _hubConnection;
     private string? User { get; set; }
     private string? Message { get; set; }
-    private List<string> _messagesToCaller = new List<string>();
-    private List<string> _messagesToGroup = new List<string>();
-    
+    private List<string> _privateMessages = new List<string>();
+    private List<string> _groupMessages = new List<string>();
+    private bool IsInGroup { get; set; } = false;
+
     protected override async Task OnInitializedAsync()
     {
         _hubConnection = new HubConnectionBuilder()
@@ -64,17 +67,17 @@
         _hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
         {
             var encodedMsg = $"{user}: {message}";
-            _messagesToCaller.Add(encodedMsg);
+            
+            if (IsInGroup)
+            {
+                _groupMessages.Add(encodedMsg);
+            }
+            else
+            {
+                _privateMessages.Add(encodedMsg);
+            }
             InvokeAsync(StateHasChanged);
         });
-        
-        _hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
-        {
-            var encodedMsg = $"{user}: {message}";
-            _messagesToGroup.Add(encodedMsg);
-            InvokeAsync(StateHasChanged);
-        });
-        
         
         await _hubConnection.StartAsync();
     }
@@ -100,22 +103,37 @@
         if (!string.IsNullOrEmpty(User) && !string.IsNullOrEmpty(Message))
         {
             await SendMessageToCaller(User, Message);
-            _messagesToCaller.Add($"Me: {Message}"); // Add sent message to the list
             Message = ""; // Clear the message input field after sending
         }
     }
 
     private async Task SendToGroup()
     {
-        if (!string.IsNullOrEmpty(User) && !string.IsNullOrEmpty(Message))
+        if (!string.IsNullOrEmpty(User) && !string.IsNullOrEmpty(Message) && IsInGroup)
         {
             await SendMessageToGroups(User, Message);
-            _messagesToGroup.Add($"Me: {Message}"); // Add sent message to the list
             Message = ""; // Clear the message input field after sending
         }
     }
 
+    private async Task JoinGroup()
+    {
+        if (!IsInGroup)
+        {
+            await AddToGroup("testGroup");
+            IsInGroup = true;
+        }
+    }
     
+    private async Task LeaveGroup()
+    {
+        if (IsInGroup)
+        {
+            await RemoveFromGroup("testGroup");
+            IsInGroup = false;
+        }
+    }
+
     public async Task AddToGroup(string testGroup)
     {
         if (_hubConnection is not null)

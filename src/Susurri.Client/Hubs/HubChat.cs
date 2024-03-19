@@ -16,7 +16,7 @@ public class ChatHub : Hub<IChatClient>
 
     public Task SendMessageToGroups(string user, string message)
     {
-        return Clients.Group("SignalR Users").ReceiveMessage(user, message);
+        return Clients.Group("testGroup").ReceiveMessage(user, message);
     }
 
     public override async Task OnConnectedAsync()
@@ -33,7 +33,7 @@ public class ChatHub : Hub<IChatClient>
     {
         await Groups.AddToGroupAsync(Context.ConnectionId, testGroup);
 
-        await Clients.Group(testGroup).ReceiveMessage("Send", $"{Context.ConnectionId} has joined the group {testGroup}.");
+        await Clients.Group(testGroup).ReceiveMessage(testGroup, $"{Context.ConnectionId} has joined the group {testGroup}.");
     }
 
     public async Task RemoveFromGroup(string testGroup)
