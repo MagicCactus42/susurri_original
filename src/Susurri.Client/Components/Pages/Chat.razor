@@ -68,7 +68,7 @@
         {
             var encodedMsg = $"{user}: {message}";
             
-            if (IsInGroup)
+            if (IsInGroup || message.Contains("has joined the group") || message.Contains("has left the group"))
             {
                 _groupMessages.Add(encodedMsg);
             }
@@ -100,7 +100,7 @@
 
     private async Task SendToCaller()
     {
-        if (!string.IsNullOrEmpty(User) && !string.IsNullOrEmpty(Message))
+        if (!string.IsNullOrEmpty(User) && !string.IsNullOrEmpty(Message) && !IsInGroup)
         {
             await SendMessageToCaller(User, Message);
             Message = ""; // Clear the message input field after sending
