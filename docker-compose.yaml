@@ -11,8 +11,8 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - postgres:/var/lib/docker/volumes/susurri-git_postgres/_data
+      - postgres:\Users\Micha\Desktop\Susurri_Database
   
 volumes: 
   postgres:
-    driver: local
+    driver: \Users\Micha\Desktop\Susurri_Database

@@ -2,10 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 using Susurri.Client.Components;
 using MudBlazor.Services;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
 using Susurri.Client.Components.Pages;
 using Susurri.Client.Hubs;
 using Microsoft.Extensions.DependencyInjection;
-
+using Susurri.Client.DAL;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,7 +23,7 @@ builder.Services.AddResponseCompression(opts =>
 
 builder.Services.AddMudServices();
 builder.Services.AddSignalR();
-
+builder.Services.AddPostgres();
 
 
 

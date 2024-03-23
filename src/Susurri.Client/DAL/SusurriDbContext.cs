@@ -1,15 +1,20 @@
-using System.Data.Common;
 using Microsoft.EntityFrameworkCore;
+using MudBlazor.Extensions;
 using Susurri.Client.Hubs;
 
 namespace Susurri.Client.DAL;
 
-public class SusurriDbContext : DbContext
+internal sealed class SusurriDbContext : DbContext
 {
-    public DbSet<IChatClient> iChatClient;
+    public DbSet<ChatHub>? ChatHub { get; set; }
 
+    public SusurriDbContext() {}
     public SusurriDbContext(DbContextOptions<SusurriDbContext> dbContextOptions) : base(dbContextOptions)
     {
-        
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
     }
 }
