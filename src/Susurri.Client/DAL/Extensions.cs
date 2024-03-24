@@ -6,7 +6,7 @@ namespace Susurri.Client.DAL
     {
         public static IServiceCollection AddPostgres(this IServiceCollection services)
         {
-            const string connectionString = "Host=localhost;Database=Susurri;Username=postgres;Password=";
+            const string connectionString = "Host=localhost;Database=Susurri_Database;Username=postgres;Password=";
             services.AddDbContext<SusurriDbContext>(options => options.UseNpgsql(connectionString));
             
             return services;

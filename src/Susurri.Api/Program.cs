@@ -1,5 +1,6 @@
 using MudBlazor;
 using MudBlazor.Services;
+using Susurri.Client.DAL;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +14,7 @@ builder.Services.AddSignalR();
 builder.Services.AddCors();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddMudServices();
-
+builder.Services.AddPostgres();
 
 var app = builder.Build();
 

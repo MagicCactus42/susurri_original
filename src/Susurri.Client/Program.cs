@@ -24,6 +24,7 @@ builder.Services.AddResponseCompression(opts =>
 builder.Services.AddMudServices();
 builder.Services.AddSignalR();
 builder.Services.AddPostgres();
+builder.Services.AddDbContext<SusurriDbContext>();
 
 
 

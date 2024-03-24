@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.SignalR;
 namespace Susurri.Client.Hubs;
 
