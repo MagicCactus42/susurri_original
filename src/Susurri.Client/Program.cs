@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Susurri.Client.Components;
 using MudBlazor.Services;
@@ -6,10 +7,27 @@ using Microsoft.EntityFrameworkCore;
 using Susurri.Client.Components.Pages;
 using Susurri.Client.Hubs;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Susurri.Client.DAL;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAuthentication(o =>
+{
+    o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(o =>
+{
+    o.TokenValidationParameters = new TokenValidationParameters
+    {
+    // Tu wrzucic parametry po dodaniu miejsca na tokeny
+    // https://www.youtube.com/watch?v=mgeuh8k3I4g  9:48 koniec
+    };
+});
+
+builder.Services.AddAuthorization();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -24,9 +42,8 @@ builder.Services.AddResponseCompression(opts =>
 builder.Services.AddMudServices();
 builder.Services.AddSignalR();
 builder.Services.AddPostgres();
-builder.Services.AddDbContext<SusurriDbContext>();
-
-
+builder.Services.AddDbContext<SusurriDbContext>(o =>
+    o.UseNpgsql("Host=localhost;Database=Susurri_Database;Username=postgres;Password="));
 
 
 var app = builder.Build();
@@ -44,6 +61,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
 app.UseResponseCompression();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();

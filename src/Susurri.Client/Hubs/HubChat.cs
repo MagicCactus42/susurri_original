@@ -1,10 +1,11 @@
-using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.SignalR;
+
 namespace Susurri.Client.Hubs;
 
 
 public class ChatHub : Hub<IChatClient>
 {
+    
     public async Task SendMessage(string user, string message)
     {
         await Clients.All.ReceiveMessage(user, message);
