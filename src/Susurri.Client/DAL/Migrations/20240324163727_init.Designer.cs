@@ -12,8 +12,8 @@ using Susurri.Client.DAL;
 namespace Susurri.Client.DAL.Migrations
 {
     [DbContext(typeof(SusurriDbContext))]
-    [Migration("20240324163727_init")]
-    partial class init
+    [Migration("20240324163727_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
