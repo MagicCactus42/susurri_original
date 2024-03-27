@@ -8,6 +8,7 @@ namespace Susurri.Client.DAL;
 internal sealed class SusurriDbContext : DbContext
 {
     public DbSet<ChatMessage>? ChatMessage { get; set; }
+    public DbSet<User> Users { get; set; }
 
     public SusurriDbContext() {}
     public SusurriDbContext(DbContextOptions<SusurriDbContext> dbContextOptions) : base(dbContextOptions)

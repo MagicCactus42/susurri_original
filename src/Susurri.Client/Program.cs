@@ -9,6 +9,7 @@ using Susurri.Client.Hubs;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Susurri.Client.DAL;
+using Susurri.Client.Security;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,6 +30,7 @@ builder.Services.AddAuthentication(o =>
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddControllers();
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
@@ -42,6 +44,7 @@ builder.Services.AddResponseCompression(opts =>
 builder.Services.AddMudServices();
 builder.Services.AddSignalR();
 builder.Services.AddPostgres();
+builder.Services.AddSecurity();
 builder.Services.AddDbContext<SusurriDbContext>(o =>
     o.UseNpgsql("Host=localhost;Database=Susurri_Database;Username=postgres;Password="));
 

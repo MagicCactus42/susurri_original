@@ -4,4 +4,4 @@ using ICommand = Susurri.Client.Abstractions.ICommand;
 
 namespace Susurri.Client.Commands;
 
-public record SignUp(Guid UserId, string Email, string Username, string Password, string Role) : ICommand;
+public record SignUp(Guid UserId, string Username, string Password, string Role) : ICommand;
