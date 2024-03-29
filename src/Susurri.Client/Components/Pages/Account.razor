@@ -1,0 +1,27 @@
+@page "/account"
+@using Susurri.Client.Models
+
+<h3>Account</h3>
+
+<EditForm Model="@SignUp" OnValidSubmit="@HandleValidSubmit" Id="accountForm">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label for="username">Username</label>
+        <InputText id="username" @bind-Value="SignUp.Username" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <InputText id="password" @bind-Value="SignUp.Password" type="password" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Sign Up</button>
+</EditForm>
+
+@code {
+    SignUpViewModel SignUp { get; set; } = new SignUpViewModel();
+
+    private async Task HandleValidSubmit()
+    {
+        // Call the API from here
+        // Use HttpClient or IHttpClientFactory to send HTTP requests
+    }
+}

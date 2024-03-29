@@ -8,8 +8,12 @@ using Susurri.Client.Components.Pages;
 using Susurri.Client.Hubs;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Susurri.Client.Abstractions;
+using Susurri.Client.Commands;
+using Susurri.Client.Commands.Handlers;
 using Susurri.Client.DAL;
 using Susurri.Client.Security;
+using Susurri.Client.Time;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,13 +44,14 @@ builder.Services.AddResponseCompression(opts =>
     opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
         new[] { "application/octet-stream" });
 });
-
+builder.Services.AddScoped(typeof(ICommandHandler<SignUp>), typeof(SignUpHandler));
+builder.Services.AddScoped<IClock, Clock>();
 builder.Services.AddMudServices();
 builder.Services.AddSignalR();
 builder.Services.AddPostgres();
 builder.Services.AddSecurity();
 builder.Services.AddDbContext<SusurriDbContext>(o =>
-    o.UseNpgsql("Host=localhost;Database=Susurri_Database;Username=postgres;Password="));
+    o.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
 var app = builder.Build();
