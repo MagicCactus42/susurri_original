@@ -51,12 +51,12 @@
 </div>
 
 @code {
-    private HubConnection? _hubConnection;
-    private string? User { get; set; }
-    private string? Message { get; set; }
+    private HubConnection _hubConnection;
+    private string User { get; set; }
+    private string Message { get; set; }
     private List<string> _privateMessages = new List<string>();
     private List<string> _groupMessages = new List<string>();
-    private bool IsInGroup { get; set; } = false;
+    private bool IsInGroup { get; set; }
 
     protected override async Task OnInitializedAsync()
     {

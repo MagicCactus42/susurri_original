@@ -30,10 +30,10 @@
 </ul>
 
 @code {
-    private HubConnection? _hubConnection;
+    private HubConnection _hubConnection;
     private List<string> _messages = new List<string>();
-    private string? _userInput;
-    private string? _messageInput;
+    private string _userInput;
+    private string _messageInput;
 
     protected override async Task OnInitializedAsync()
     {

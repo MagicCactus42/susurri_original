@@ -7,8 +7,8 @@ public class ChatMessage
 {
     public int GroupId { get; set; }
     public int Id { get; private set; }
-    public string? Content { get; set; }
-    public string? SenderUsername { get; set; }
+    public string Content { get; set; }
+    public string SenderUsername { get; set; }
     public DateTime Timestamp { get; private set; }
     
 
