@@ -31,7 +31,7 @@
         var signUpContent = new StringContent(signUpJson, Encoding.UTF8, "application/json");
         
         // Send a POST request to your API endpoint; replace "https://yourapi.com/signup" with your actual endpoint
-        var response = await Http.PostAsync("", signUpContent);
+        var response = await Http.PostAsync("https://localhost:7200/account", signUpContent);
 
         if (response.IsSuccessStatusCode)
         {

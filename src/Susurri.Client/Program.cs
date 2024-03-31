@@ -49,6 +49,7 @@ builder.Services.AddScoped<IClock, Clock>();
 builder.Services.AddMudServices();
 builder.Services.AddSignalR();
 builder.Services.AddPostgres();
+builder.Services.AddHttpClient();
 builder.Services.AddSecurity();
 builder.Services.AddDbContext<SusurriDbContext>(o =>
     o.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
