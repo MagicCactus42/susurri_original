@@ -6,6 +6,13 @@
 
 <h3>Account</h3>
 
+@if (IsLoggedIn)
+{
+    <div class="alert alert-success" role="alert">
+        You are successfully signed up and logged in!
+    </div>
+}
+
 <EditForm Model="@SignUp" OnValidSubmit="@HandleValidSubmit" Id="accountForm">
     <DataAnnotationsValidator />
     <div class="form-group">
@@ -20,27 +27,24 @@
 </EditForm>
 
 @code {
+    bool IsLoggedIn = false;
     SignUpViewModel SignUp { get; set; } = new SignUpViewModel();
 
     private async Task HandleValidSubmit()
     {
-        // Convert your model to a JSON string
         var signUpJson = JsonSerializer.Serialize(SignUp);
-
-        // Send it as StringContent, specify media type as application/json
         var signUpContent = new StringContent(signUpJson, Encoding.UTF8, "application/json");
-        
-        // Send a POST request to your API endpoint; replace "https://yourapi.com/signup" with your actual endpoint
-        var response = await Http.PostAsync("https://localhost:7200/account", signUpContent);
+
+        var response = await Http.PostAsync("https://localhost:7200/account/signup", signUpContent);
 
         if (response.IsSuccessStatusCode)
         {
-            // Handle success
+            IsLoggedIn = true;
         }
         else
         {
-            // Handle failure
-            // You can read the response using await response.Content.ReadAsStringAsync() to get more details
+            var errorResponse = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Error: {errorResponse}");
         }
     }
 }
