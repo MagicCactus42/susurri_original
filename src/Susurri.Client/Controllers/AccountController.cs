@@ -6,11 +6,18 @@ namespace Susurri.Client.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class AccountController : ControllerBase
+internal sealed class AccountController : ControllerBase
 {
+    private readonly UserService _userService;
+
+    public AccountController(UserService userService)
+    {
+        _userService = userService;
+    }
     [HttpPost("signup")]
     public IActionResult SignUp(SignUpViewModel model)
     {
-        // tu zaczac jutro
+        _userService.SaveUser(model);
+        return NoContent();
     }
 }

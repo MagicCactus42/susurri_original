@@ -13,6 +13,7 @@ using Susurri.Client.Commands;
 using Susurri.Client.Commands.Handlers;
 using Susurri.Client.DAL;
 using Susurri.Client.Security;
+using Susurri.Client.Services;
 using Susurri.Client.Time;
 
 
@@ -46,6 +47,8 @@ builder.Services.AddResponseCompression(opts =>
 });
 builder.Services.AddScoped(typeof(ICommandHandler<SignUp>), typeof(SignUpHandler));
 builder.Services.AddScoped<IClock, Clock>();
+builder.Services.AddScoped<IPasswordManager, PasswordManager>();
+builder.Services.AddTransient<UserService>();
 builder.Services.AddMudServices();
 builder.Services.AddSignalR();
 builder.Services.AddPostgres();
