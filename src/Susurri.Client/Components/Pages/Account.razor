@@ -2,44 +2,36 @@
 @using Susurri.Client.Models
 @using System.Text.Json
 @using System.Text
+@using MudBlazor
 @inject HttpClient Http
 
 <h3>Account</h3>
 
-@if (IsLoggedIn)
+<MudForm Model="SignUp" OnValidSubmit="@SubmitForm">
+    <MudTextField Label="Username" @bind-Value="SignUp.Username" Id="Username" />
+    <MudTextField Label="Password" @bind-Value="SignUp.Password" InputType="InputType.Password" Id="Password" />
+    <MudButton Type="Submit" Color="Color.Primary">Sign Up</MudButton>
+</MudForm>
+
+@if (_showSuccessMessage)
 {
-    <div class="alert alert-success" role="alert">
-        You are successfully signed up and logged in!
-    </div>
+    <MudAlert Severity="Severity.Success">You are successfully signed up and logged in!</MudAlert>
 }
 
-<EditForm Model="@SignUp" OnValidSubmit="@HandleValidSubmit" Id="accountForm">
-    <DataAnnotationsValidator />
-    <div class="form-group">
-        <label for="username">Username</label>
-        <InputText id="username" @bind-Value="SignUp.Username" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label for="password">Password</label>
-        <InputText id="password" @bind-Value="SignUp.Password" type="password" class="form-control" />
-    </div>
-    <button type="submit" class="btn btn-primary">Sign Up</button>
-</EditForm>
-
 @code {
-    bool IsLoggedIn = false;
-    SignUpViewModel SignUp { get; set; } = new SignUpViewModel();
+    private bool _showSuccessMessage = false;
+    private SignUpViewModel SignUp { get; set; } = new SignUpViewModel();
 
-    private async Task HandleValidSubmit()
+    private async Task SubmitForm()
     {
         var signUpJson = JsonSerializer.Serialize(SignUp);
         var signUpContent = new StringContent(signUpJson, Encoding.UTF8, "application/json");
 
-        var response = await Http.PostAsync("https://localhost:7200/account/signup", signUpContent);
+        var response = await Http.PostAsync("https://localhost:7200/account", signUpContent);
 
         if (response.IsSuccessStatusCode)
         {
-            IsLoggedIn = true;
+            _showSuccessMessage = true;
         }
         else
         {
