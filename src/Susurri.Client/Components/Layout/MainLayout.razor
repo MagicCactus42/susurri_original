@@ -1,35 +1,30 @@
 ﻿@using Susurri.Client.Components
 @inherits LayoutComponentBase
+@inject NavigationManager NavManager
 
-<MyMudThemeProvider />
+<MudThemeProvider />
 
-<div class="page mud-layout">
-
-    <div class="sidebar mud-elevation-1">
-        <div class="top-row mud-drawer-head">
-            <div>
-                <a class="navbar-brand" href="https://mudblazor.com/" target="_blank">MudBlazor</a>
-            </div>
-        </div>
-
-        <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
-        <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-            <NavMenu />
-        </div>
-
-    </div>
-
-     <main>
-        <div class="top-row px-4">
-            <MudIconButton Icon="@Icons.Custom.Brands.MudBlazor" Style="color: white;" Link="https://mudblazor.com/" Target="_blank" />
-            <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Style="color: white;" Link="https://github.com/MudBlazor/MudBlazor/" Target="_blank" />
-        </div>
-
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(() => DrawerToggle())" />
+        <MudText Typo="Typo.h5" Class="ml-3">Susurri</MudText>
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Custom.Brands.MudBlazor" Style="color: white;" Link="https://mudblazor.com/" Target="_blank" />
+        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Style="color: white;" Link="https://github.com/MudBlazor/MudBlazor/" Target="_blank" />
+    </MudAppBar>
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+        <MudNavMenu>
+            <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+            <MudNavLink Href="chat" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Chat</MudNavLink>
+            <MudNavLink Href="account" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Account</MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
+    <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="my-2 pt-2">
             @Body
         </MudContainer>
-    </main>
-</div>
+    </MudMainContent>
+</MudLayout>
 
 <div id="blazor-error-ui">
     An unhandled error has occurred.
@@ -37,3 +32,11 @@
     <a class="dismiss">🗙</a>
 </div>
 
+@code{
+    bool _drawerOpen = true;
+    
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+}

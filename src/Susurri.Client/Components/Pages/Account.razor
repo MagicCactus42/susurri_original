@@ -9,19 +9,27 @@
 
 <MudLayout>
     <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <MudText Typo="Typo.h5" Class="ml-3">Susurri</MudText>
         <MudSpacer />
         <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
     </MudAppBar>
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+        <MudNavMenu>
+            <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+            <MudNavLink Href="chat" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Chat</MudNavLink>
+            <MudNavLink Href="account" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Account</MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
     <MudMainContent>
         <MudForm Model="SignUp" OnValidSubmit="@SubmitForm">
-            <label for="Username">Username</label>
-            <MudTextField @bind-Value="SignUp.Username" Id="Username" />
-            
-            <label for="Password">Password</label>
-            <MudTextField @bind-Value="SignUp.Password" InputType="InputType.Password" Id="Password" />
-            <MudButton Type="Submit" Color="Color.Primary">Sign Up</MudButton>
-        </MudForm>
+                    <label for="Username">Username</label>
+                    <MudTextField @bind-Value="SignUp.Username" Id="Username" Autocomplete="username"/>
+                    
+                    <label for="Password">Password</label>
+                    <MudTextField @bind-Value="SignUp.Password" InputType="InputType.Password" Id="Password" Autocomplete="current-password"/>
+                    <MudButton Type="Submit" Color="Color.Primary">Sign Up</MudButton>
+                </MudForm>
     </MudMainContent>
 </MudLayout>
 
@@ -50,5 +58,12 @@
             var errorResponse = await response.Content.ReadAsStringAsync();
             Console.WriteLine($"Error: {errorResponse}");
         }
+    }
+    
+    bool _drawerOpen = true;
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
     }
 }
