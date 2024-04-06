@@ -3,6 +3,4 @@ using Susurri.Client.DTO;
 
 namespace Susurri.Client.Queries;
 
-public class GetUsers : IQuery<IEnumerable<UserDto>>
-{
-}
+public class GetUsers : IQuery<IEnumerable<UserDto>>;

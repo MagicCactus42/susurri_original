@@ -6,7 +6,7 @@ namespace Susurri.Client.Models;
 public class SignUpModel : PageModel
 {
     // For simplicity HttpClient is used. In a real world application, you'd use IHttpClientFactory
-    private static readonly HttpClient client = new HttpClient();
+    private static readonly HttpClient Client = new HttpClient();
     
     [BindProperty]
     public SignUpViewModel SignUp { get; set; }
@@ -23,7 +23,7 @@ public class SignUpModel : PageModel
         }
 
         // Use appropriate address where your API lives
-        var response = await client.PostAsJsonAsync("https://localhost:7083/account", SignUp);
+        var response = await Client.PostAsJsonAsync("https://localhost:7200/account", SignUp);
         
         if (response.IsSuccessStatusCode)
         {

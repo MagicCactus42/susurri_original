@@ -2,7 +2,6 @@
 @using Susurri.Client.Models
 @using System.Text.Json
 @using System.Text
-@using MudBlazor
 @inject HttpClient Http
 
 <MudThemeProvider />
@@ -29,7 +28,7 @@
                     <label for="Password">Password</label>
                     <MudTextField @bind-Value="SignUp.Password" InputType="InputType.Password" Id="Password" Autocomplete="current-password"/>
                     <MudButton Type="Submit" Color="Color.Primary">Sign Up</MudButton>
-                </MudForm>
+        </MudForm>            
     </MudMainContent>
 </MudLayout>
 
@@ -39,7 +38,7 @@
 }
 
 @code {
-    private bool _showSuccessMessage = false;
+    private bool _showSuccessMessage;
     private SignUpViewModel SignUp { get; set; } = new SignUpViewModel();
 
     private async Task SubmitForm()

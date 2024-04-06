@@ -6,20 +6,11 @@ using Susurri.Client.ValueObjects;
 
 namespace Susurri.Client.Services;
 
-internal sealed class UserService
+internal sealed class UserService(SusurriDbContext context, IPasswordManager passwordManager)
 {
-    private readonly SusurriDbContext _context;
-    private readonly IPasswordManager _passwordManager;
-    
-    public UserService(SusurriDbContext context, IPasswordManager passwordManager)
-    {
-        _context = context;
-        _passwordManager = passwordManager;
-    }
-    
     public bool UserExists(string username)
     {
-        return _context.Users.Any(x => x.Username == username);
+        return context.Users.Any(x => x.Username == username);
     }
         
     public void SaveUser(SignUpViewModel model)
@@ -28,19 +19,19 @@ internal sealed class UserService
         {
             Id = new UserId(Guid.NewGuid()),
             Username = model.Username,
-            Password = _passwordManager.Secure(model.Password),
+            Password = passwordManager.Secure(model.Password),
             Role = Role.User(),
             CreatedAt = DateTime.Now
         };
-        _context.Users.Add(user);
-        _context.SaveChanges();
+        context.Users.Add(user);
+        context.SaveChanges();
     }
     public bool ValidatePassword(string username, string password)
     {
-        var user = _context.Users.FirstOrDefault(x => x.Username == username);
+        var user = context.Users.FirstOrDefault(x => x.Username == username);
         if (user != null)
         {
-            return _passwordManager.Validate(password, user.Password);
+            return passwordManager.Validate(password, user.Password);
         }
         return false;
     }

@@ -4,8 +4,7 @@ namespace Susurri.Client.ValueObjects;
 
 public sealed record Role
 {
-
-    public static IEnumerable<string> AvailableRoles { get; } = new[] {"admin", "user"};
+    private static IEnumerable<string> AvailableRoles { get; } = new[] {"admin", "user"};
 
     public string Value { get; }
 
