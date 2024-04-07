@@ -1,11 +1,6 @@
 namespace Susurri.Client.Exceptions;
 
-public class InvalidUsernameException : CustomException
+public class InvalidUsernameException(string userName) : CustomException($"Username: '{userName}' is invalid.")
 {
-    public string UserName { get; }
-
-    public InvalidUsernameException(string userName) : base($"Username: '{userName}' is invalid.")
-    {
-        UserName = userName;
-    }
+    public string UserName { get; } = userName;
 }

@@ -6,17 +6,12 @@ using Susurri.Client.Abstractions;
 
 namespace Susurri.Client.DAL.Handlers;
 
-internal sealed class GetUserHandler : IQueryHandler<GetUser, UserDto>
+internal sealed class GetUserHandler(SusurriDbContext dbContext) : IQueryHandler<GetUser, UserDto>
 {
-    private readonly SusurriDbContext _dbContext;
-    
-    public GetUserHandler(SusurriDbContext dbContext)
-        => _dbContext = dbContext;
-    
     public async Task<UserDto> HandleAsync(GetUser query)
     {
         var userId = new UserId(query.UserId);
-        var user = await _dbContext.Users
+        var user = await dbContext.Users
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == userId);
 

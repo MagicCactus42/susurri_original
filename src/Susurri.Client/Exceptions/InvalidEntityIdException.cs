@@ -1,9 +1,6 @@
 namespace Susurri.Client.Exceptions;
 
-public sealed class InvalidEntityIdException : CustomException
+public sealed class InvalidEntityIdException(object id) : CustomException($"Cannot set: {id}  as entity identifier.")
 {
-    public object Id { get; }
-
-    public InvalidEntityIdException(object id) : base($"Cannot set: {id}  as entity identifier.")
-        => Id = id;
+    public object Id { get; } = id;
 }

@@ -1,5 +1,3 @@
-using System.Windows.Input;
-using Susurri.Client.Abstractions;
 using ICommand = Susurri.Client.Abstractions.ICommand;
 
 namespace Susurri.Client.Commands;

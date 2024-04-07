@@ -6,15 +6,10 @@ using Susurri.Client.Abstractions;
 
 namespace Susurri.Client.DAL.Handlers;
 
-internal sealed class GetUsersHandler : IQueryHandler<GetUsers, IEnumerable<UserDto>>
+internal sealed class GetUsersHandler(SusurriDbContext dbContext) : IQueryHandler<GetUsers, IEnumerable<UserDto>>
 {
-    private readonly SusurriDbContext _dbContext;
-
-    public GetUsersHandler(SusurriDbContext dbContext)
-        => _dbContext = dbContext;
-
     public async Task<IEnumerable<UserDto>> HandleAsync(GetUsers query)
-        => await _dbContext.Users
+        => await dbContext.Users
             .AsNoTracking()
             .Select(x => x.AsDto())
             .ToListAsync();
