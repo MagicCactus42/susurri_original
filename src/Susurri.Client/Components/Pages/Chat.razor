@@ -1,6 +1,8 @@
 @page "/chat"
 @rendermode InteractiveServer
 @using Microsoft.AspNetCore.SignalR
+@using Susurri.Client.DAL
+@using Susurri.Client.Entities
 @inject NavigationManager Navigation
 @implements IAsyncDisposable
 
@@ -60,14 +62,14 @@
     private List<string> _privateMessages = new List<string>();
     private List<string> _groupMessages = new List<string>();
     private bool IsInGroup { get; set; }
-
+    private readonly SusurriDbContext _context;
     protected override async Task OnInitializedAsync()
     {
         _hubConnection = new HubConnectionBuilder()
             .WithUrl(Navigation.ToAbsoluteUri("/chathub"))
             .Build();
         
-        _hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+        _hubConnection.On<string, string>("ReceiveMessage", async (user, message) =>
         {
             var encodedMsg = $"{user}: {message}";
             
@@ -79,7 +81,11 @@
             {
                 _privateMessages.Add(encodedMsg);
             }
-            InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged);
+
+            var dbMessage = new ChatMessage() { SenderUsername = user, Content = message };
+            _context.ChatMessage.Add(dbMessage);
+            await _context.SaveChangesAsync();
         });
         
         await _hubConnection.StartAsync();
