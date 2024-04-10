@@ -21,7 +21,7 @@
         </MudNavMenu>
     </MudDrawer>
     <MudMainContent>
-        <MudForm Model="SignUp" OnValidSubmit="@SubmitForm">
+        <MudForm Model="SignUp" @SubmitForm()>
                     <label for="Username">Username</label>
                     <MudTextField @bind-Value="SignUp.Username" Id="Username" Autocomplete="username"/>
                     
