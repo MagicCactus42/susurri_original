@@ -62,7 +62,8 @@
     private readonly List<string> _privateMessages = new List<string>();
     private readonly List<string> _groupMessages = new List<string>();
     private bool IsInGroup { get; set; }
-    private readonly SusurriDbContext _context;
+    private readonly SusurriDbContext _context = new SusurriDbContext();
+    
     protected override async Task OnInitializedAsync()
     {
         _hubConnection = new HubConnectionBuilder()

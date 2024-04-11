@@ -13,7 +13,7 @@ public static class UsersApi
     {
         app.MapGet("account/me", async (HttpContext context, IQueryHandler<GetUser, UserDto> handler) =>
         {
-            var userDto = await handler.HandleAsync(new GetUser {UserId = Guid.Parse(context.User.Identity.Name)});
+            var userDto = await handler.HandleAsync(new GetUser {UserId = Guid.Parse(context.User.Identity!.Name!)});
             return Results.Ok(userDto);
         }).RequireAuthorization().WithName(MeRoute);
 
