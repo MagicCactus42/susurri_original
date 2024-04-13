@@ -1,14 +1,11 @@
 @page "/chat"
 @rendermode InteractiveServer
 @using Microsoft.AspNetCore.SignalR
+@using Microsoft.EntityFrameworkCore
 @using Susurri.Client.DAL
 @using Susurri.Client.Entities
 @inject NavigationManager Navigation
 @implements IAsyncDisposable
-
-
-// https://stackoverflow.com/questions/3094495/db-schema-for-chats
-// https://stackoverflow.com/questions/7063051/best-way-to-store-chat-messages-in-a-database
 
 <PageTitle>Home</PageTitle>
 
@@ -88,10 +85,27 @@
             _context.ChatMessage.Add(dbMessage);
             await _context.SaveChangesAsync();
         });
-        
+        await LoadMessagesFromDatabase();
         await _hubConnection.StartAsync();
     }
-
+    
+    private async Task LoadMessagesFromDatabase()
+    {
+        var messages = await _context.ChatMessage.ToListAsync();
+        foreach (var message in messages)
+        {
+            var encodedMsg = $"{message.SenderUsername}: {message.Content}";
+            if (IsInGroup)
+            {
+                _groupMessages.Add(encodedMsg);
+            }
+            else
+            {
+                _privateMessages.Add(encodedMsg);
+            }
+        }
+    }
+    
     private async Task SendMessageToCaller(string user, string message)
     {
         if (_hubConnection is not null)
@@ -170,6 +184,7 @@
             await _hubConnection.DisposeAsync();
         }
     }
+    
 
     public Task ThrowException()
         => throw new HubException("This error will be sent to the client!");

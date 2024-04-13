@@ -52,7 +52,7 @@ builder.Services.AddPostgres();
 builder.Services.AddHttpClient();
 builder.Services.AddSecurity();
 builder.Services.AddDbContext<SusurriDbContext>(o =>
-    o.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    o.UseNpgsql(builder.Configuration.GetConnectionString("Host=localhost;Database=postgres;Username=postgres;Password=DtMMaNtC44i4")));
 
 
 var app = builder.Build();
