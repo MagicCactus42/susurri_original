@@ -1,4 +1,4 @@
-version: '3.19'
+version: '3.9'
 
 services:
   postgres:
@@ -11,8 +11,8 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - postgres:\Users\Micha\Desktop\Susurri_Database
-  
+      - postgres_data:/var/lib/postgresql/data
+
 volumes: 
-  postgres:
-    driver: \Users\Micha\Desktop\Susurri_Database
+  postgres_data:
+    driver: local

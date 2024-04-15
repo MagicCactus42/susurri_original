@@ -45,6 +45,7 @@ builder.Services.AddResponseCompression(opts =>
 builder.Services.AddScoped(typeof(ICommandHandler<SignUp>), typeof(SignUpHandler));
 builder.Services.AddScoped<IClock, Clock>();
 builder.Services.AddScoped<IPasswordManager, PasswordManager>();
+builder.Services.AddScoped<SusurriDbContext>();
 builder.Services.AddTransient<UserService>();
 builder.Services.AddMudServices();
 builder.Services.AddSignalR();
