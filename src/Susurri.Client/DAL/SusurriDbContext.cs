@@ -17,4 +17,12 @@ internal sealed class SusurriDbContext : DbContext
     {
         modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
     }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseNpgsql("Host=localhost;Database=postgres;Username=postgres;Password=DtMMaNtC44i4");
+        }
+    }
+
 }
