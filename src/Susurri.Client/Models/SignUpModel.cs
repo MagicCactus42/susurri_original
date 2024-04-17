@@ -1,13 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Susurri.Client.Services;
 
 namespace Susurri.Client.Models;
 
-public class SignUpModel : PageModel
+internal sealed class SignUpModel : PageModel
 {
-    // For simplicity HttpClient is used. In a real world application, you'd use IHttpClientFactory
-    private static readonly HttpClient Client = new HttpClient();
-    
+    private readonly UserService _userService; // Inject UserService
+    public SignUpModel(UserService userService)
+    {
+        _userService = userService;
+    }
+
     [BindProperty]
     public SignUpViewModel SignUp { get; set; }
 
@@ -15,20 +19,23 @@ public class SignUpModel : PageModel
     {
     }
 
-    public async Task<IActionResult> OnPostAsync()
+    public Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid)
         {
-            return Page();
+            return Task.FromResult<IActionResult>(Page());
         }
 
-        // Use appropriate address where your API lives
-        var response = await Client.PostAsJsonAsync("https://localhost:7200/account", SignUp);
-        
-        if (response.IsSuccessStatusCode)
+        if (_userService.UserExists(SignUp.Username))
         {
-            return RedirectToPage("/chat");
+            ModelState.AddModelError(nameof(SignUp.Username), "Username already exists.");
+            return Task.FromResult<IActionResult>(Page());
         }
-        return Page();
+
+        // Create the user
+        _userService.SaveUser(SignUp);
+
+        // Redirect to chat page after successful signup
+        return Task.FromResult<IActionResult>(RedirectToPage("/chat"));
     }
 }
