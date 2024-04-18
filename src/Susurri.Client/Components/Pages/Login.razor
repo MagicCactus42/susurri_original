@@ -1,7 +1,11 @@
-@page "/Login"
+@page "/login"
 @using System.ComponentModel.DataAnnotations
+@using Susurri.Client.DAL
+@using Susurri.Client.Entities
+@using Susurri.Client.ValueObjects
+@rendermode InteractiveServer
 
-<EditForm Model="@_model" OnValidSubmit="OnValidSubmit">
+<EditForm Model="@_model" OnValidSubmit="OnValidSubmit" FormName="Name">
 <DataAnnotationsValidator/>
 <MudGrid>
     <MudItem xs="12" sm="7">
@@ -9,8 +13,6 @@
             <MudCardContent>
                 <MudTextField Label="First name" HelperText="Max. 8 characters"
                               @bind-Value="_model.Username" For="@(() => _model.Username)"/>
-                <MudTextField Label="Email" Class="mt-3"
-                              @bind-Value="_model.Email" For="@(() => _model.Email)"/>
                 <MudTextField Label="Password" HelperText="Choose a strong password" Class="mt-3"
                               @bind-Value="_model.Password" For="@(() => _model.Password)" InputType="InputType.Password"/>
                 <MudTextField Label="Password" HelperText="Repeat the password" Class="mt-3"
@@ -47,6 +49,7 @@
 
 @code {
     readonly RegisterAccountForm _model = new RegisterAccountForm();
+    private readonly SusurriDbContext _context = new SusurriDbContext();
     private bool _success;
 
     public class RegisterAccountForm
@@ -54,10 +57,6 @@
         [Required]
         [StringLength(8, ErrorMessage = "Name length can't be more than 8.")]
         public string Username { get; set; }
-
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
 
         [Required]
         [StringLength(30, ErrorMessage = "Password must be at least 8 characters long.", MinimumLength = 8)]
@@ -69,10 +68,14 @@
 
     }
 
-    private void OnValidSubmit(EditContext context)
+    private async void OnValidSubmit(EditContext context)
     {
         _success = true;
+        
+        var user = new User() { Username = _model.Username, Password = _model.Password, CreatedAt = DateTime.UtcNow, Role = null, Id = new UserId() };
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync();
+        
         StateHasChanged();
     }
-
 }
