@@ -2,6 +2,7 @@
 @using System.ComponentModel.DataAnnotations
 @using Susurri.Client.DAL
 @using Susurri.Client.Entities
+@using Susurri.Client.Services
 @using Susurri.Client.ValueObjects
 @rendermode InteractiveServer
 
@@ -50,8 +51,9 @@
 @code {
     readonly RegisterAccountForm _model = new RegisterAccountForm();
     private readonly SusurriDbContext _context = new SusurriDbContext();
+    private readonly UserService _userService;
     private bool _success;
-
+    
     public class RegisterAccountForm
     {
         [Required]
@@ -71,8 +73,10 @@
     private async void OnValidSubmit(EditContext context)
     {
         _success = true;
-        
-        var user = new User() { Username = _model.Username, Password = _model.Password, CreatedAt = DateTime.UtcNow, Role = null, Id = new UserId() };
+
+        var userId = new UserId(Guid.NewGuid());
+        var userRole = Role.User();
+        var user = new User(userId, _model.Username, _model.Password, userRole , DateTime.UtcNow);
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
         

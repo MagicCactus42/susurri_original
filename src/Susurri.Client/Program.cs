@@ -48,6 +48,7 @@ builder.Services.AddScoped<IPasswordManager, PasswordManager>();
 builder.Services.AddScoped<SusurriDbContext>();
 builder.Services.AddTransient<UserService>();
 builder.Services.AddMudServices();
+builder.Services.AddServerSideBlazor().AddCircuitOptions(o => o.DetailedErrors = true);
 builder.Services.AddSignalR();
 builder.Services.AddPostgres();
 builder.Services.AddHttpClient();

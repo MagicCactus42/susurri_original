@@ -18,9 +18,5 @@ public class User
         Role = role;
         CreatedAt = createdAt;
     }
-
-    public User()
-    {
-        throw new NotImplementedException();
-    }
+    
 }

@@ -2,11 +2,6 @@ namespace Susurri.Client.Entities;
 
 public class ChatMessage
 {
-    public ChatMessage(int id)
-    {
-        Id = id;
-    }
-
     public int GroupId { get; init; }
     public int Id { get; private set; }
     public string Content { get; init; }

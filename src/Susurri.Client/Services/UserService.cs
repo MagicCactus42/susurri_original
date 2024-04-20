@@ -15,14 +15,14 @@ internal sealed class UserService(SusurriDbContext context, IPasswordManager pas
         
     public void SaveUser(SignUpViewModel model)
     {
-        var user = new User()
-        {
-            Id = new UserId(Guid.NewGuid()),
-            Username = model.Username,
-            Password = passwordManager.Secure(model.Password),
-            Role = Role.User(),
-            CreatedAt = DateTime.Now
-        };
+        var user = new User(
+        
+            new UserId(Guid.NewGuid()),
+            model.Username,
+            passwordManager.Secure(model.Password),
+            Role.User(),
+            DateTime.Now
+        );
         context.Users.Add(user);
         context.SaveChanges();
     }
