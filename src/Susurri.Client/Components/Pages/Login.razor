@@ -1,9 +1,7 @@
 @page "/login"
 @using System.ComponentModel.DataAnnotations
-@using Susurri.Client.DAL
 @using Susurri.Client.Models
 @using Susurri.Client.Services
-@inject SusurriDbContext Context
 @inject UserService UserService
 @rendermode InteractiveServer
 
@@ -51,7 +49,6 @@
 
 @code {
     readonly RegisterAccountForm _model = new RegisterAccountForm();
-    private readonly SusurriDbContext _context = new SusurriDbContext();
     private bool _success;
     
     

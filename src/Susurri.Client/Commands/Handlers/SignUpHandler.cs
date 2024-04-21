@@ -1,7 +1,10 @@
 using Susurri.Client.Abstractions;
 using Susurri.Client.Entities;
 using Susurri.Client.Security;
-using Susurri.Client.DAL;
+using Susurri.Client.Exceptions;
+using Susurri.Client.Repositories;
+using Susurri.Client.ValueObjects;
+
 
 namespace Susurri.Client.Commands.Handlers;
 
@@ -9,26 +12,33 @@ internal sealed class SignUpHandler : ICommandHandler<SignUp>
 {
     private readonly IPasswordManager _passwordManager;
     private readonly IClock _clock;
-    private readonly SusurriDbContext _context;
+    private readonly IUserRepository _userRepository;
     
-    public SignUpHandler(IPasswordManager passwordManager, IClock clock, SusurriDbContext context)
+    public SignUpHandler(IPasswordManager passwordManager, IClock clock, IUserRepository userRepository)
     {
         _passwordManager = passwordManager;
         _clock = clock;
-        _context = context;
+        _userRepository = userRepository;
     }
     
     
     public async Task HandleAsync(SignUp command)
     {
         // validate input
+        var userId = new UserId(command.UserId);
+        var username = new Username(command.Username);
+        var password = new Password(command.Password);
+        var role = string.IsNullOrWhiteSpace(command.Role) ? Role.User() : new Role(command.Role);
         // validate if user already exist
+        if (await _userRepository.GetByUsernameAsync(username) is not null)
+        {
+            throw new UsernameAlreadyInUseException(username);
+        }
         // create the user
-        var securePassword = _passwordManager.Secure(command.Password);
-        var user = new User(command.UserId, command.Username, securePassword, command.Role,
+        var securePassword = _passwordManager.Secure(password);
+        var user = new User(userId, username, securePassword, role,
             _clock.Current());
         // save to db
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+        await _userRepository.AddAsync(user);
     }
 }

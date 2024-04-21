@@ -32,11 +32,9 @@ namespace Susurri.Client.Models
                 ModelState.AddModelError(nameof(SignUp.Username), "Username already exists.");
                 return Page();
             }
-
-            // Create the user asynchronously
+            
             await _userService.SaveUser(SignUp);
-
-            // Redirect to chat page after successful signup
+            
             return RedirectToPage("/chat");
         }
     }
