@@ -1,11 +1,12 @@
 using Microsoft.EntityFrameworkCore;
+using Susurri.Client.Abstractions;
 using Susurri.Client.Entities;
 
 namespace Susurri.Client.DAL;
 
-internal sealed class SusurriDbContext : DbContext
+internal sealed class SusurriDbContext : DbContext, ISusurriDbContext
 {
-    public DbSet<ChatMessage> ChatMessage { get; init; }
+    public DbSet<ChatMessage> ChatMessages { get; init; }
     public DbSet<User> Users { get; init; }
 
     public SusurriDbContext() {}

@@ -82,7 +82,7 @@
             await InvokeAsync(StateHasChanged);
 
             var dbMessage = new ChatMessage() { SenderUsername = user, Content = message };
-            _context.ChatMessage.Add(dbMessage);
+            _context.ChatMessages.Add(dbMessage);
             await _context.SaveChangesAsync();
         });
         await LoadMessagesFromDatabase();
@@ -91,7 +91,7 @@
     
     private async Task LoadMessagesFromDatabase()
     {
-        var messages = await _context.ChatMessage.ToListAsync();
+        var messages = await _context.ChatMessages.ToListAsync();
         foreach (var message in messages)
         {
             var encodedMsg = $"{message.SenderUsername}: {message.Content}";

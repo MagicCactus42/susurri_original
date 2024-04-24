@@ -1,3 +1,4 @@
+using Susurri.Client.Abstractions;
 using Susurri.Client.DAL;
 using Susurri.Client.Entities;
 using Susurri.Client.Models;
@@ -6,12 +7,12 @@ using Susurri.Client.ValueObjects;
 
 namespace Susurri.Client.Services;
 
-internal sealed class UserService
+internal sealed class UserService : IUserService
 {
-    private readonly SusurriDbContext _context;
+    private readonly ISusurriDbContext _context;
     private readonly IPasswordManager _passwordManager;
 
-    public UserService(SusurriDbContext context, IPasswordManager passwordManager)
+    public UserService(ISusurriDbContext context, IPasswordManager passwordManager)
     {
         _context = context;
         _passwordManager = passwordManager;

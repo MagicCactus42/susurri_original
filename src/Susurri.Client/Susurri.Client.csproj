@@ -29,6 +29,7 @@
   
   <ItemGroup>
     <Folder Include="DAL\Migrations\" />
+    <InternalsVisibleTo Include="Susurri.Test.Unit" />
   </ItemGroup>
   
 </Project>

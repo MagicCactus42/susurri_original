@@ -111,6 +111,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Susurri.Client\Susurri.Client.csproj" />
+      <InternalsVisibleTo Include="Susurri.Test.Unit" />
     </ItemGroup>
 
 </Project>
