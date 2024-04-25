@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Susurri.Client.Abstractions;
+using Susurri.Client.Commands;
+using Susurri.Client.DAL;
 using Susurri.Client.Entities;
 using Susurri.Client.Exceptions;
 using Susurri.Client.Models;
@@ -22,22 +24,22 @@ public class SignUpTests
         var clock = new Clock();
         var userService = new UserService(_context, passwordManager);
         
-        string value = "rerer"; // already existing username
-        string pswrd = "SomePassword";
-        string userRole = "user";
+        const string value = "rerer"; // already existing username
+        const string pswrd = "SomePassword";
+        const string userRole = "user";
         var userId = new UserId(Guid.NewGuid());
         var username = new Username(value);
         var password = _passwordManager.Secure(pswrd);
         var role = new Role(userRole);
 
-        var user = new User(userId, username, password, role, clock.Current());
-        await userService.SaveUser(new SignUpViewModel
+        var user = new User(userId, username, password, role, _clock.Current());
+        await _userService.SaveUser(new SignUpViewModel
         {
             Username = username,
             Password = password
         });
 
-        await Assert.ThrowsAsync<UsernameAlreadyInUseException>(() => userRepository.AddAsync(user));
+        await Assert.ThrowsAsync<UsernameAlreadyInUseException>(() => _userRepository.AddAsync(user));
     }
 
     #region Arrange
@@ -48,13 +50,14 @@ public class SignUpTests
     private readonly IUserService _userService;
     private readonly ISusurriDbContext _context;
 
-    public SignUpTests(IPasswordManager passwordManager, IUserRepository userRepository, IClock clock, IUserService userService, ISusurriDbContext context)
+    public SignUpTests()
     {
-        _passwordManager = passwordManager;
-        _userRepository = userRepository;
-        _clock = clock;
-        _userService = userService;
-        _context = context;
+        _passwordManager = new PasswordManager(new MockPasswordHasher<User>());
+        _userRepository = new UserRepository();
+        _clock = new Clock();
+        _context = new SusurriDbContext();
+        _userService = new UserService(_context, _passwordManager);
+        
     }
 
     #endregion
@@ -65,11 +68,7 @@ public class SignUpTests
 
         public PasswordVerificationResult VerifyHashedPassword(TUser user, string hashedPassword, string providedPassword)
         {
-            if (hashedPassword == providedPassword)
-            {
-                return PasswordVerificationResult.Success;
-            }
-            return PasswordVerificationResult.Failed;
+            return hashedPassword == providedPassword ? PasswordVerificationResult.Success : PasswordVerificationResult.Failed;
         }
     }
 
