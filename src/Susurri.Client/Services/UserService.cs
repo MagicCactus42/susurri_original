@@ -1,6 +1,6 @@
 using Susurri.Client.Abstractions;
-using Susurri.Client.DAL;
 using Susurri.Client.Entities;
+using Susurri.Client.Exceptions;
 using Susurri.Client.Models;
 using Susurri.Client.Security;
 using Susurri.Client.ValueObjects;
@@ -32,8 +32,13 @@ internal sealed class UserService : IUserService
             Role.User(),
             DateTime.UtcNow
         );
+        if (UserExists(model.Username))
+        {
+            throw new UsernameAlreadyInUseException(model.Username);
+        }
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
+        
     }
 
     public bool ValidatePassword(string username, string password)
