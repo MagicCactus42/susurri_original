@@ -36,7 +36,7 @@ public class SignUpTests
     public async void given_too_short_password_should_fail()
     {
         const string haslo = "123";
-        string name = _random.ToString();
+        string name = RandomString(8);
         var password = _passwordManager.Secure(haslo);
         
         await Assert.ThrowsAsync<InvalidPasswordException>(async () =>
