@@ -32,6 +32,24 @@ public class SignUpTests
         });
     }
 
+    [Fact]
+    public async void given_too_short_password_should_fail()
+    {
+        const string haslo = "123";
+        string name = _random.ToString();
+        var password = _passwordManager.Secure(haslo);
+        
+        await Assert.ThrowsAsync<InvalidPasswordException>(async () =>
+        {
+            await _userService.SaveUser(new SignUpViewModel
+            {
+                Username = name,
+                Password = password
+            });
+        });
+        
+    }
+
     #region Arrange
 
     private readonly IPasswordManager _passwordManager;
@@ -49,7 +67,14 @@ public class SignUpTests
         _userService = new UserService(_context, _passwordManager);
         
     }
+    private static Random _random = new Random();
 
+    public static string RandomString(int length)
+    {
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        return new string(Enumerable.Repeat(chars, length)
+            .Select(s => s[_random.Next(s.Length)]).ToArray());
+    }
     #endregion
 
     private class MockPasswordHasher<TUser> : IPasswordHasher<TUser> where TUser : class
