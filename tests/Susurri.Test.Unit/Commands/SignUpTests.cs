@@ -36,7 +36,7 @@ public class SignUpTests
     public async void given_too_short_password_should_fail()
     {
         const string haslo = "123";
-        string name = RandomString(8);
+        var name = RandomString(8);
         var password = _passwordManager.Secure(haslo);
         
         await Assert.ThrowsAsync<InvalidPasswordException>(async () =>
@@ -48,6 +48,23 @@ public class SignUpTests
             });
         });
         
+    }
+
+    [Fact]
+    public async void given_too_short_username_should_fail()
+    {
+        const string name = "op";
+        var haslo = RandomString(10);
+        var password = _passwordManager.Secure(haslo);
+
+        await Assert.ThrowsAsync<InvalidUsernameException>(async () =>
+        {
+            await _userService.SaveUser(new SignUpViewModel
+            {
+                Username = name,
+                Password = password
+            });
+        });
     }
 
     #region Arrange
@@ -69,7 +86,7 @@ public class SignUpTests
     }
     private static Random _random = new Random();
 
-    public static string RandomString(int length)
+    private static string RandomString(int length)
     {
         const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         return new string(Enumerable.Repeat(chars, length)
