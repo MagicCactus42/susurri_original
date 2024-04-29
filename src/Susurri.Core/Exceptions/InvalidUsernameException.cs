@@ -1,4 +1,4 @@
-namespace Susurri.Client.Exceptions;
+namespace Susurri.Core.Exceptions;
 
 public class InvalidUsernameException(string userName) : CustomException($"Username: '{userName}' is invalid.")
 {

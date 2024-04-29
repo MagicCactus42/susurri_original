@@ -1,3 +1,3 @@
-namespace Susurri.Client.Exceptions;
+namespace Susurri.Core.Exceptions;
 
 public sealed class InvalidPasswordException() : CustomException("Invalid password.");

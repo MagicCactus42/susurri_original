@@ -43,12 +43,12 @@ builder.Services.AddResponseCompression(opts =>
     opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
         new[] { "application/octet-stream" });
 });
-builder.Services.AddScoped(typeof(ICommandHandler<SignUp>), typeof(SignUpHandler));
-builder.Services.AddScoped<IClock, Clock>();
-builder.Services.AddScoped<IPasswordManager, PasswordManager>();
-builder.Services.AddScoped<SusurriDbContext>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddTransient<UserService>();
+builder.Services.AddScoped(typeof(ICommandHandler<SignUp>), typeof(SignUpHandler))
+        .AddScoped<IClock, Clock>()
+        .AddScoped<IPasswordManager, PasswordManager>()
+        .AddScoped<ISusurriDbContext, SusurriDbContext>()
+        .AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddMudServices();
 builder.Services.AddServerSideBlazor().AddCircuitOptions(o => o.DetailedErrors = true);
 builder.Services.AddSignalR();

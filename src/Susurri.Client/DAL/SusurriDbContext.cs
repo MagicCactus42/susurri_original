@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Susurri.Client.Abstractions;
-using Susurri.Client.Entities;
+using Susurri.Core.Entities;
 
 namespace Susurri.Client.DAL;
 

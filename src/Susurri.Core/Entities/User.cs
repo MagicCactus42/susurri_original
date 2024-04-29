@@ -1,6 +1,6 @@
-using Susurri.Client.ValueObjects;
+using Susurri.Core.ValueObjects;
 
-namespace Susurri.Client.Entities;
+namespace Susurri.Core.Entities;
 
 public class User
 {

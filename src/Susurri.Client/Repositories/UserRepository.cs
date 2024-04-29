@@ -1,5 +1,6 @@
-using Susurri.Client.Entities;
-using Susurri.Client.ValueObjects;
+using Susurri.Client.Abstractions;
+using Susurri.Core.Entities;
+using Susurri.Core.ValueObjects;
 
 namespace Susurri.Client.Repositories;
 

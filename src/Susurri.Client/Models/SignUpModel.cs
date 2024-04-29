@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Susurri.Client.Abstractions;
-using Susurri.Client.Exceptions;
-using Susurri.Client.Services;
+using Susurri.Core.Exceptions;
 
 namespace Susurri.Client.Models
 {

@@ -1,4 +1,4 @@
-namespace Susurri.Client.Hubs;
+namespace Susurri.Client.Abstractions;
 
 public interface IChatClient
 {

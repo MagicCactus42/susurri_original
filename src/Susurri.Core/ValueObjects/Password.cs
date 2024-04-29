@@ -1,6 +1,6 @@
-using Susurri.Client.Exceptions;
+using Susurri.Core.Exceptions;
 
-namespace Susurri.Client.ValueObjects;
+namespace Susurri.Core.ValueObjects;
 
 public sealed record Password
 {
@@ -18,7 +18,7 @@ public sealed record Password
 
     public static implicit operator Password(string value) => new(value);
 
-    public static implicit operator string(Password value) => value?.Value;
+    public static implicit operator string(Password value) => value.Value;
 
     public override string ToString() => Value;
 }

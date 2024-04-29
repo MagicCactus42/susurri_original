@@ -1,4 +1,4 @@
-namespace Susurri.Client.Security;
+namespace Susurri.Client.Abstractions;
 
 public interface IPasswordManager
 {

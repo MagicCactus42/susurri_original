@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Susurri.Client.Queries;
 using Susurri.Client.DTO;
-using Susurri.Client.ValueObjects;
 using Susurri.Client.Abstractions;
+using Susurri.Core.ValueObjects;
 
 namespace Susurri.Client.DAL.Handlers;
 

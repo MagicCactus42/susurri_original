@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
-using Susurri.Client.Entities;
+using Susurri.Client.Abstractions;
+using Susurri.Core.Entities;
 
 namespace Susurri.Client.Security;
 

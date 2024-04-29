@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.SignalR;
+using Susurri.Client.Abstractions;
 
 namespace Susurri.Client.Hubs;
 

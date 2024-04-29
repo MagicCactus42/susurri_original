@@ -23,6 +23,7 @@
     <ItemGroup>
       <ProjectReference Include="..\..\src\Susurri.Api\Susurri.Api.csproj" />
       <ProjectReference Include="..\..\src\Susurri.Client\Susurri.Client.csproj" />
+      <ProjectReference Include="..\..\src\Susurri.Core\Susurri.Core.csproj" />
     </ItemGroup>
 
 </Project>

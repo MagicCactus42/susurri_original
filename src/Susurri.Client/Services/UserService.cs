@@ -1,9 +1,8 @@
 using Susurri.Client.Abstractions;
-using Susurri.Client.Entities;
-using Susurri.Client.Exceptions;
 using Susurri.Client.Models;
-using Susurri.Client.Security;
-using Susurri.Client.ValueObjects;
+using Susurri.Core.Entities;
+using Susurri.Core.Exceptions;
+using Susurri.Core.ValueObjects;
 
 namespace Susurri.Client.Services;
 

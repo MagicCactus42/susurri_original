@@ -1,6 +1,6 @@
-using Susurri.Client.Exceptions;
+using Susurri.Core.Exceptions;
 
-namespace Susurri.Client.ValueObjects;
+namespace Susurri.Core.ValueObjects;
 
 public sealed record UserId
 {

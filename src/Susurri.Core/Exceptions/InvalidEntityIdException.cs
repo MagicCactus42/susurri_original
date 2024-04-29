@@ -1,4 +1,4 @@
-namespace Susurri.Client.Exceptions;
+namespace Susurri.Core.Exceptions;
 
 public sealed class InvalidEntityIdException(object id) : CustomException($"Cannot set: {id}  as entity identifier.")
 {

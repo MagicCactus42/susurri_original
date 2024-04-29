@@ -1,5 +1,5 @@
 using Susurri.Client.DTO;
-using Susurri.Client.Entities;
+using Susurri.Core.Entities;
 
 namespace Susurri.Client.DAL.Handlers;
 

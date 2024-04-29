@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Susurri.Client", "src\Susur
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Susurri.Test.Unit", "tests\Susurri.Test.Unit\Susurri.Test.Unit.csproj", "{1B6B93F0-7333-4BE4-A4F9-480F53B8D6B1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Susurri.Core", "src\Susurri.Core\Susurri.Core.csproj", "{868ADBB9-D741-4F0C-81AC-91BF039D80C2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{1B6B93F0-7333-4BE4-A4F9-480F53B8D6B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B6B93F0-7333-4BE4-A4F9-480F53B8D6B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B6B93F0-7333-4BE4-A4F9-480F53B8D6B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{868ADBB9-D741-4F0C-81AC-91BF039D80C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{868ADBB9-D741-4F0C-81AC-91BF039D80C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{868ADBB9-D741-4F0C-81AC-91BF039D80C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{868ADBB9-D741-4F0C-81AC-91BF039D80C2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Susurri.Client.Entities;
+using Susurri.Core.Entities;
 
 namespace Susurri.Client.Abstractions;
 

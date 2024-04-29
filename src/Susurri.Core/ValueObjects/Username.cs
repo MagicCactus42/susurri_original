@@ -1,6 +1,6 @@
-using Susurri.Client.Exceptions;
+using Susurri.Core.Exceptions;
 
-namespace Susurri.Client.ValueObjects;
+namespace Susurri.Core.ValueObjects;
 
 public sealed record Username
 {
@@ -18,7 +18,7 @@ public sealed record Username
 
     public static implicit operator Username(string value) => new Username(value);
 
-    public static implicit operator string(Username value) => value?.Value;
+    public static implicit operator string(Username value) => value.Value;
 
     public override string ToString() => Value;
 }

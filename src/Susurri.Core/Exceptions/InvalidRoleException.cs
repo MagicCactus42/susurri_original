@@ -1,4 +1,4 @@
-namespace Susurri.Client.Exceptions;
+namespace Susurri.Core.Exceptions;
 
 public sealed class InvalidRoleException(string role) : CustomException($"Role: '{role}' is invalid.")
 {

@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Susurri.Client.Entities;
+using Susurri.Core.Entities;
 
 namespace Susurri.Client.DAL;
 
