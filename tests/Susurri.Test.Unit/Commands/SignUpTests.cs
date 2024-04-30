@@ -67,6 +67,21 @@ public class SignUpTests
         });
     }
 
+    [Fact]
+    public async void given_too_long_username_should_fail()
+    {
+        const string name = "Username123123";
+        var haslo = RandomString(10);
+        var password = _passwordManager.Secure(haslo);
+
+        await Assert.ThrowsAsync<TooLongUsernameException>(async () =>
+            await _userService.SaveUser(new SignUpViewModel
+            {
+                Username = name,
+                Password = password
+            }));
+    }
+
     #region Arrange
 
     private readonly IPasswordManager _passwordManager;
