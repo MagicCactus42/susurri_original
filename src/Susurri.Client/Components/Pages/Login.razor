@@ -1,8 +1,9 @@
 @page "/login"
 @using System.ComponentModel.DataAnnotations
+@using Susurri.Client.Abstractions
 @using Susurri.Client.Models
 @using Susurri.Client.Services
-@inject UserService UserService
+@inject IUserService _UserService
 @rendermode InteractiveServer
 
 <EditForm Model="@_model" OnValidSubmit="OnValidSubmit" FormName="">
@@ -55,7 +56,7 @@
     public class RegisterAccountForm
     {
         [Required]
-        [StringLength(8, ErrorMessage = "Name length can't be more than 8.")]
+        [StringLength(8, ErrorMessage = "Name length can't be more than 12.")]
         public string Username { get; set; }
 
         [Required]
@@ -72,7 +73,7 @@
     {
         _success = true;
         
-        await UserService.SaveUser(new SignUpViewModel
+        await _UserService.SaveUser(new SignUpViewModel
         {
             Username = _model.Username,
             Password = _model.Password

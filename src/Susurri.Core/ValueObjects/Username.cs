@@ -8,14 +8,9 @@ public sealed record Username
         
     public Username(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-        {
+        if (string.IsNullOrWhiteSpace(value) || value.Length is > 12 or < 3 )
+        {     
             throw new InvalidUsernameException(value);
-        }
-
-        if (value.Length is > 12)
-        {
-            throw new TooLongUsernameException(value);
         }
             
         Value = value;

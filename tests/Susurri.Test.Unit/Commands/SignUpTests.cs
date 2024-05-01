@@ -74,7 +74,7 @@ public class SignUpTests
         var haslo = RandomString(10);
         var password = _passwordManager.Secure(haslo);
 
-        await Assert.ThrowsAsync<TooLongUsernameException>(async () =>
+        await Assert.ThrowsAsync<InvalidUsernameException>(async () =>
             await _userService.SaveUser(new SignUpViewModel
             {
                 Username = name,
