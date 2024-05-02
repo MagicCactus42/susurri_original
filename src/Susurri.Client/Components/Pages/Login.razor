@@ -3,7 +3,7 @@
 @using Susurri.Client.Abstractions
 @using Susurri.Client.Models
 @using Susurri.Client.Services
-@inject IUserService _UserService
+@inject IUserService UserService
 @rendermode InteractiveServer
 
 <EditForm Model="@_model" OnValidSubmit="OnValidSubmit" FormName="">
@@ -73,7 +73,7 @@
     {
         _success = true;
         
-        await _UserService.SaveUser(new SignUpViewModel
+        await UserService.SaveUser(new SignUpViewModel
         {
             Username = _model.Username,
             Password = _model.Password
