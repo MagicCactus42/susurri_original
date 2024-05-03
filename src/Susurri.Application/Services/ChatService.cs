@@ -1,9 +1,8 @@
-using Susurri.Client.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Susurri.Client.Abstractions;
+using Susurri.Client.Hubs;
 
-
-namespace Susurri.Client.Services;
+namespace Susurri.Application.Services;
 
 public class ChatService(IHubContext<ChatHub, IChatClient> hubContext)
 {

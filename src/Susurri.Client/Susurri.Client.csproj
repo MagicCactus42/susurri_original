@@ -28,7 +28,6 @@
 
   
   <ItemGroup>
-    <Folder Include="DAL\Migrations\" />
     <InternalsVisibleTo Include="Susurri.Test.Unit" />
     <ProjectReference Include="C:\Users\Micha\Susurri-Git\src\Susurri.Core\Susurri.Core.csproj" />
   </ItemGroup>

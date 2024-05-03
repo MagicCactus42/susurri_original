@@ -1,10 +1,11 @@
+using Susurri.Application.Abstractions;
 using Susurri.Client.Abstractions;
+using Susurri.Core.Abstractions;
 using Susurri.Core.Entities;
 using Susurri.Core.Exceptions;
 using Susurri.Core.ValueObjects;
 
-
-namespace Susurri.Client.Commands.Handlers;
+namespace Susurri.Application.Commands.Handlers;
 
 internal sealed class SignUpHandler : ICommandHandler<SignUp>
 {

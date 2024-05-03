@@ -6,4 +6,10 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+	<InternalsVisibleTo Include="Susurri.Test.Unit" />
+	<ProjectReference Include="C:\Users\Micha\Susurri-Git\src\Susurri.Core\Susurri.Core.csproj" />
+	<ProjectReference Include="C:\Users\Micha\Susurri-Git\src\Susurri.Client\Susurri.Client.csproj" />
+    </ItemGroup>
+
 </Project>

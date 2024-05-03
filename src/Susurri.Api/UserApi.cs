@@ -1,7 +1,8 @@
+using Susurri.Application.Abstractions;
+using Susurri.Application.Commands;
+using Susurri.Application.DTO;
+using Susurri.Application.Queries;
 using Susurri.Client.Abstractions;
-using Susurri.Client.Commands;
-using Susurri.Client.DTO;
-using Susurri.Client.Queries;
 
 namespace Susurri.Api;
 

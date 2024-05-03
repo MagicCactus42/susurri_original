@@ -4,7 +4,7 @@ using Susurri.Core.Entities;
 using Susurri.Core.Exceptions;
 using Susurri.Core.ValueObjects;
 
-namespace Susurri.Client.Services;
+namespace Susurri.Application.Services;
 
 internal sealed class UserService : IUserService
 {

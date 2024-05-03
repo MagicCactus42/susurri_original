@@ -1,7 +1,8 @@
+using Susurri.Application.Abstractions;
+using Susurri.Application.DTO;
 using Susurri.Client.Abstractions;
-using Susurri.Client.DTO;
 
-namespace Susurri.Client.Queries;
+namespace Susurri.Application.Queries;
 
 public class GetUser : IQuery<UserDto>
 {

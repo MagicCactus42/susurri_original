@@ -13,6 +13,7 @@ using Susurri.Client.Repositories;
 using Susurri.Client.Security;
 using Susurri.Client.Services;
 using Susurri.Client.Time;
+using Susurri.Core.Abstractions;
 
 
 var builder = WebApplication.CreateBuilder(args);

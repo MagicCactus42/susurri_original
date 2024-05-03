@@ -2,7 +2,7 @@
 @rendermode InteractiveServer
 @using Microsoft.AspNetCore.SignalR
 @using Microsoft.EntityFrameworkCore
-@using Susurri.Client.DAL
+@using Susurri.Client.Abstractions
 @using Susurri.Core.Entities
 @inject NavigationManager Navigation
 @implements IAsyncDisposable
@@ -59,7 +59,7 @@
     private readonly List<string> _privateMessages = new List<string>();
     private readonly List<string> _groupMessages = new List<string>();
     private bool IsInGroup { get; set; }
-    private readonly SusurriDbContext _context = new SusurriDbContext();
+    private readonly ISusurriDbContext _context;
     
     protected override async Task OnInitializedAsync()
     {

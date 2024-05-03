@@ -1,4 +1,4 @@
-namespace Susurri.Client.Abstractions;
+namespace Susurri.Core.Abstractions;
 
 public interface IClock
 {

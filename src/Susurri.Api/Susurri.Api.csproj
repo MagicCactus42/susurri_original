@@ -110,6 +110,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Susurri.Application\Susurri.Application.csproj" />
       <ProjectReference Include="..\Susurri.Client\Susurri.Client.csproj" />
       <ProjectReference Include="C:\Users\Micha\Susurri-Git\src\Susurri.Core\Susurri.Core.csproj" />
       <InternalsVisibleTo Include="Susurri.Test.Unit" />

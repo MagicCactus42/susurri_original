@@ -1,4 +1,4 @@
-namespace Susurri.Client.DTO;
+namespace Susurri.Application.DTO;
 
 public class UserDto
 {

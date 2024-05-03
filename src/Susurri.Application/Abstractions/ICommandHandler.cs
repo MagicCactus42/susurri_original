@@ -1,4 +1,4 @@
-namespace Susurri.Client.Abstractions;
+namespace Susurri.Application.Abstractions;
 
 public interface ICommandHandler<in TCommand> where TCommand : class, ICommand
 {

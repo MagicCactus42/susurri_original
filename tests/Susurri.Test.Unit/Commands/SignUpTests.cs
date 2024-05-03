@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Identity;
+using Susurri.Application.Services;
 using Susurri.Client.Abstractions;
 using Susurri.Client.DAL;
 using Susurri.Client.Models;
 using Susurri.Client.Repositories;
 using Susurri.Client.Security;
-using Susurri.Client.Services;
 using Susurri.Client.Time;
+using Susurri.Core.Abstractions;
 using Susurri.Core.Entities;
 using Susurri.Core.Exceptions;
 using Susurri.Core.ValueObjects;
