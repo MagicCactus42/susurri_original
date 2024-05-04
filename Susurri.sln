@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Susurri.Api", "src\Susurri.Api\Susurri.Api.csproj", "{67082891-BE42-4D74-9634-3AF4D2CD08C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Susurri.Client", "src\Susurri.Client\Susurri.Client.csproj", "{A1BB9D8E-8D63-4769-97B6-A56725E76B24}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Susurri.Infrastructure", "src\Susurri.Infrastructure\Susurri.Infrastructure.csproj", "{A1BB9D8E-8D63-4769-97B6-A56725E76B24}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Susurri.Test.Unit", "tests\Susurri.Test.Unit\Susurri.Test.Unit.csproj", "{1B6B93F0-7333-4BE4-A4F9-480F53B8D6B1}"
 EndProject

@@ -9,7 +9,7 @@
     <ItemGroup>
 	<InternalsVisibleTo Include="Susurri.Test.Unit" />
 	<ProjectReference Include="C:\Users\Micha\Susurri-Git\src\Susurri.Core\Susurri.Core.csproj" />
-	<ProjectReference Include="C:\Users\Micha\Susurri-Git\src\Susurri.Client\Susurri.Client.csproj" />
+	<ProjectReference Include="..\Susurri.Infrastructure\Susurri.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>
