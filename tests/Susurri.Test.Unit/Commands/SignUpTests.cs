@@ -1,15 +1,15 @@
 using Microsoft.AspNetCore.Identity;
-using Susurri.Application.Services;
-using Susurri.Client.Abstractions;
-using Susurri.Client.DAL;
-using Susurri.Client.Models;
-using Susurri.Client.Repositories;
-using Susurri.Client.Security;
-using Susurri.Client.Time;
+using Susurri.Api.Repositories;
+using Susurri.Application.Abstractions;
+using Susurri.Application.Time;
 using Susurri.Core.Abstractions;
+using Susurri.Core.DAL;
 using Susurri.Core.Entities;
 using Susurri.Core.Exceptions;
+using Susurri.Core.Models;
+using Susurri.Core.Services;
 using Susurri.Core.ValueObjects;
+using Susurri.Infrastructure.Security;
 
 namespace Susurri.Test.Unit.Commands;
 

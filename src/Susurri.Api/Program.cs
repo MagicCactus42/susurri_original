@@ -1,5 +1,6 @@
 using MudBlazor.Services;
 using Susurri.Client.DAL;
+using Susurri.Core.DAL;
 
 var builder = WebApplication.CreateBuilder(args);
 

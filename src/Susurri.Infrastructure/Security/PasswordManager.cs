@@ -1,14 +1,16 @@
 using Microsoft.AspNetCore.Identity;
-using Susurri.Client.Abstractions;
+using Susurri.Application.Abstractions;
+using Susurri.Core.Abstractions;
 using Susurri.Core.Entities;
 
-namespace Susurri.Client.Security;
+namespace Susurri.Infrastructure.Security;
 
 internal sealed class PasswordManager(IPasswordHasher<User> passwordHasher) : IPasswordManager
 {
-    public string Secure(string password) => passwordHasher.HashPassword(default!, password);
+    private readonly IPasswordHasher<User> _passwordHasher = passwordHasher;
+    public string Secure(string password) => _passwordHasher.HashPassword(default!, password);
 
     public bool Validate(string password, string securedPassword) =>
-        passwordHasher.VerifyHashedPassword(default!, securedPassword, password)
+        _passwordHasher.VerifyHashedPassword(default!, securedPassword, password)
             is PasswordVerificationResult.Success;
 }

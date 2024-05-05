@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Identity;
-using Susurri.Client.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
+using Susurri.Application.Abstractions;
+using Susurri.Core.Abstractions;
 using Susurri.Core.Entities;
 
-namespace Susurri.Client.Security;
+namespace Susurri.Infrastructure.Security;
 
 internal static class Extensions
 {
