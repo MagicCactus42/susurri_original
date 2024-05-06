@@ -8,12 +8,10 @@ namespace Susurri.Core.DAL.Handlers;
 
 internal sealed class GetUserHandler(SusurriDbContext dbContext) : IQueryHandler<GetUser, UserDto>
 {
-    private readonly SusurriDbContext _dbContext = dbContext;
-
     public async Task<UserDto> HandleAsync(GetUser query)
     {
         var userId = new UserId(query.UserId);
-        var user = await _dbContext.Users
+        var user = await dbContext.Users
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == userId);
 

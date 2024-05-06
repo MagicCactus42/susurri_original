@@ -5,9 +5,9 @@ namespace Susurri.Core.Models;
 public class SignUpViewModel
 {
     [Required]
-    public string Username { get; set; }
+    public string Username { get; init; }
 
     [Required]
     [DataType(DataType.Password)]
-    public string Password { get; set; }
+    public string Password { get; init; }
 }

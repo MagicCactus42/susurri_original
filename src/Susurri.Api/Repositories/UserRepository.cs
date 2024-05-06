@@ -6,7 +6,7 @@ namespace Susurri.Api.Repositories;
 
 internal sealed class UserRepository : IUserRepository
 {
-    private readonly List<User> _users = new();
+    private readonly List<User> _users = [];
     
     public async Task<User> GetByIdAsync(UserId id)
     {

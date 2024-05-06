@@ -11,7 +11,7 @@ using Susurri.Core.Services;
 using Susurri.Core.ValueObjects;
 using Susurri.Infrastructure.Security;
 
-namespace Susurri.Test.Unit.Commands;
+namespace Susurri.Test.Unit.CommandsTests;
 
 public class SignUpTests
 {
@@ -100,7 +100,7 @@ public class SignUpTests
         _userService = new UserService(_context, _passwordManager);
         
     }
-    private static Random _random = new Random();
+    private static Random _random = new();
 
     private static string RandomString(int length)
     {

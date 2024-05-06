@@ -16,7 +16,7 @@ public sealed record Username
         Value = value;
     }
 
-    public static implicit operator Username(string value) => new Username(value);
+    public static implicit operator Username(string value) => new(value);
 
     public static implicit operator string(Username value) => value.Value;
 

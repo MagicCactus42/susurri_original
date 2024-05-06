@@ -1,10 +1,11 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using Susurri.Core.DAL;
 
 #nullable disable
 
-namespace Susurri.Client.DAL.Migrations
+namespace Susurri.Core.DAL.Migrations
 {
     /// <inheritdoc />
     public partial class Init : Migration

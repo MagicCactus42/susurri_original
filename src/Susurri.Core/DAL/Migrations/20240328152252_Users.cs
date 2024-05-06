@@ -1,9 +1,10 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Susurri.Core.DAL;
 
 #nullable disable
 
-namespace Susurri.Client.DAL.Migrations
+namespace Susurri.Core.DAL.Migrations
 {
     /// <inheritdoc />
     public partial class Users : Migration

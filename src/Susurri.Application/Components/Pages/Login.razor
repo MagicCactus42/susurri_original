@@ -2,7 +2,6 @@
 @using System.ComponentModel.DataAnnotations
 @using Susurri.Core.Abstractions
 @using Susurri.Core.Models
-@using Susurri.Infrastructure
 @inject IUserService UserService
 @rendermode InteractiveServer
 
@@ -49,7 +48,7 @@
 
 
 @code {
-    readonly RegisterAccountForm _model = new RegisterAccountForm();
+    readonly RegisterAccountForm _model = new();
     private bool _success;
     
     

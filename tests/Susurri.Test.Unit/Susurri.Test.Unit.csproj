@@ -28,4 +28,8 @@
       <ProjectReference Include="..\..\src\Susurri.Api\Susurri.Api.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Framework\" />
+    </ItemGroup>
+
 </Project>

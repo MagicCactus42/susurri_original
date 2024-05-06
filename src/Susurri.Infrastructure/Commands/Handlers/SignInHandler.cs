@@ -31,7 +31,7 @@ internal sealed class SignInHandler : ICommandHandler<SignIn>
         }
 
         // Validate the password provided in the command with the user's password hash 
-        bool isValidPassword = _passwordManager.Validate(command.Password, user.Password);
+        var isValidPassword = _passwordManager.Validate(command.Password, user.Password);
 
         if (!isValidPassword)
         {

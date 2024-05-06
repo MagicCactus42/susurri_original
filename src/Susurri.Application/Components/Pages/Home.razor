@@ -31,7 +31,7 @@
 
 @code {
     private HubConnection _hubConnection;
-    private List<string> _messages = new List<string>();
+    private List<string> _messages = new();
     private string _userInput;
     private string _messageInput;
 
@@ -60,7 +60,7 @@
         }
     }
 
-    public bool IsConnected =>
+    private bool IsConnected =>
         _hubConnection?.State == HubConnectionState.Connected;
 
     public async ValueTask DisposeAsync()

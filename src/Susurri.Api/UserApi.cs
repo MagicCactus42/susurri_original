@@ -1,4 +1,3 @@
-using Susurri.Application.Abstractions;
 using Susurri.Core.Abstractions;
 using Susurri.Core.DTO;
 using Susurri.Core.Queries;

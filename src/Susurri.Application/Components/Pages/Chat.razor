@@ -56,8 +56,8 @@
     private HubConnection _hubConnection;
     private string User { get; set; }
     private string Message { get; set; }
-    private readonly List<string> _privateMessages = new List<string>();
-    private readonly List<string> _groupMessages = new List<string>();
+    private readonly List<string> _privateMessages = new();
+    private readonly List<string> _groupMessages = new();
     private bool IsInGroup { get; set; }
     private readonly ISusurriDbContext _context;
     
@@ -80,7 +80,6 @@
                 _privateMessages.Add(encodedMsg);
             }
             await InvokeAsync(StateHasChanged);
-
             var dbMessage = new ChatMessage() { SenderUsername = user, Content = message };
             _context.ChatMessages.Add(dbMessage);
             await _context.SaveChangesAsync();

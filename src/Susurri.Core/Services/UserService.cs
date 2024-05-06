@@ -43,10 +43,6 @@ internal sealed class UserService : IUserService
     public bool ValidatePassword(string username, string password)
     {
         var user = _context.Users.FirstOrDefault(x => x.Username == username);
-        if (user != null)
-        {
-            return _passwordManager.Validate(password, user.Password);
-        }
-        return false;
+        return user != null && _passwordManager.Validate(password, user.Password);
     }
 }

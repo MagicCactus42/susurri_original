@@ -7,10 +7,8 @@ namespace Susurri.Core.DAL.Handlers;
 
 internal sealed class GetUsersHandler(SusurriDbContext dbContext) : IQueryHandler<GetUsers, IEnumerable<UserDto>>
 {
-    private readonly SusurriDbContext _dbContext = dbContext;
-
     public async Task<IEnumerable<UserDto>> HandleAsync(GetUsers query)
-        => await _dbContext.Users
+        => await dbContext.Users
             .AsNoTracking()
             .Select(x => x.AsDto())
             .ToListAsync();

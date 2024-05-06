@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using Susurri.Application.Abstractions;
 using Susurri.Core.Abstractions;
 using Susurri.Core.Entities;
 

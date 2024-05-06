@@ -6,10 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Susurri.Client.DAL;
+using Susurri.Core.DAL;
 
 #nullable disable
 
-namespace Susurri.Client.DAL.Migrations
+namespace Susurri.Core.DAL.Migrations
 {
     [DbContext(typeof(SusurriDbContext))]
     [Migration("20240328152252_Users")]
