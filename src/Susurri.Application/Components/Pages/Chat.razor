@@ -61,6 +61,7 @@
     private bool IsInGroup { get; set; }
     private readonly ISusurriDbContext _context;
     
+    
     protected override async Task OnInitializedAsync()
     {
         _hubConnection = new HubConnectionBuilder()

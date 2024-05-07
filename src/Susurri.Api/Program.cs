@@ -9,7 +9,7 @@ using Susurri.Infrastructure;
 
 namespace Susurri.Api;
 
-public class Program
+public static class Program
 {
     public static async Task Main(string[] args)
     {
@@ -59,6 +59,6 @@ public class Program
             .AddInteractiveServerRenderMode();
         app.MapHub<ChatHub>("/chathub");
 
-        await builder.Build().RunAsync();
+        await app.RunAsync();
     }
 }
