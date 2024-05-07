@@ -33,6 +33,8 @@
         <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.5.0" />
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
+        <PackageReference Include="MudBlazor" Version="6.17.0" />
+        
     </ItemGroup>
 
     <ItemGroup>
@@ -109,8 +111,23 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Susurri.Infrastructure\Susurri.Infrastructure.csproj" />
-      <ProjectReference Include="C:\Users\Micha\Susurri-Git\src\Susurri.Core\Susurri.Core.csproj" />
       <InternalsVisibleTo Include="Susurri.Test.Unit" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="Components\App.razor" />
+      <None Include="Components\Layout\MainLayout.razor" />
+      <None Include="Components\Layout\NavMenu.razor" />
+      <None Include="Components\MyMudProviders.razor" />
+      <None Include="Components\MyMudThemeProvider.razor" />
+      <None Include="Components\Pages\Chat.razor" />
+      <None Include="Components\Pages\Error.razor" />
+      <None Include="Components\Pages\Home.razor" />
+      <None Include="Components\Pages\Login.razor" />
+      <None Include="Components\Routes.razor" />
+      <None Include="Components\_Imports.razor" />
+      <None Include="wwwroot\app.css" />
+      <None Include="wwwroot\favicon.ico" />
     </ItemGroup>
 
 </Project>

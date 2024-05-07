@@ -8,7 +8,6 @@
     <ItemGroup>
 	<InternalsVisibleTo Include="Susurri.Test.Unit" />
 	<ProjectReference Include="..\Susurri.Application\Susurri.Application.csproj" />
-	<ProjectReference Include="C:\Users\Micha\Susurri-Git\src\Susurri.Core\Susurri.Core.csproj" />
     </ItemGroup>
 
     <ItemGroup>
