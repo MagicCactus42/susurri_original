@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Susurri.Api.Repositories;
 using Susurri.Application.Abstractions;
-using Susurri.Application.Time;
 using Susurri.Core.Abstractions;
 using Susurri.Core.DAL;
 using Susurri.Core.Entities;
@@ -10,6 +9,7 @@ using Susurri.Core.Models;
 using Susurri.Core.Services;
 using Susurri.Core.ValueObjects;
 using Susurri.Infrastructure.Security;
+using Susurri.Infrastructure.Time;
 
 namespace Susurri.Test.Unit.CommandsTests;
 

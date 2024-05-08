@@ -1,6 +1,6 @@
 using Susurri.Core.Abstractions;
 
-namespace Susurri.Application.Time;
+namespace Susurri.Infrastructure.Time;
 
 internal sealed class Clock : IClock
 {
