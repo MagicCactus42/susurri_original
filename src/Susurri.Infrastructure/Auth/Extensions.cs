@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Susurri.Core.DAL;
+using Susurri.Infrastructure.Security;
 
 namespace Susurri.Infrastructure.Auth;
 
@@ -17,6 +18,7 @@ internal static class Extensions
         var options = configuration.GetOptions<AuthOptions>(SectionName);
 
         services
+            .AddSingleton<IAuthenticator, Authenticator>()
             .AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

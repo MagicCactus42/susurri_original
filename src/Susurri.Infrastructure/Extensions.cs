@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Susurri.Core.Abstractions;
@@ -9,6 +8,7 @@ using Susurri.Infrastructure.Commands.Handlers;
 using Susurri.Infrastructure.Security;
 using Susurri.Infrastructure.Time;
 using Susurri.Infrastructure.Auth;
+using Susurri.Infrastructure.Exceptions;
 
 
 namespace Susurri.Infrastructure;
@@ -29,10 +29,19 @@ public static class Extensions
 
     public static WebApplication UseInfrastructure(this WebApplication app)
     {
-        app.UseMiddleware<Exception>();
+        app.UseMiddleware<ExceptionMiddleware>();
         app.UseAuthentication();
         app.MapControllers();
 
         return app;
+    }
+    
+    public static T GetOptions<T>(this IConfiguration configuration, string sectionName) where T : class, new()
+    {
+        var options = new T();
+        var section = configuration.GetSection(sectionName);
+        section.Bind(options);
+
+        return options;
     }
 }

@@ -38,6 +38,8 @@ builder.Services.AddCore()
 
 var app = builder.Build();
 
+app.UseInfrastructure();
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment()) app.UseResponseCompression();
 
