@@ -22,6 +22,7 @@ public static class Extensions
         services.AddScoped<IPasswordManager, PasswordManager>();
         services.AddScoped(typeof(ICommandHandler<SignUp>), typeof(SignUpHandler));
         services.AddSecurity();
+        services.AddHttpContextAccessor();
         services.AddAuth(configuration);
         
         return services;
@@ -31,6 +32,7 @@ public static class Extensions
     {
         app.UseMiddleware<ExceptionMiddleware>();
         app.UseAuthentication();
+        app.UseAuthorization();
         app.MapControllers();
 
         return app;

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Susurri.Application.Abstractions;
 using Susurri.Core.DAL;
 using Susurri.Infrastructure.Security;
 
@@ -19,6 +20,7 @@ internal static class Extensions
 
         services
             .AddSingleton<IAuthenticator, Authenticator>()
+            .AddSingleton<ITokenStorage, HttpContextTokenStorage>()
             .AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

@@ -1,6 +1,10 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Susurri.Application.Abstractions;
 using Susurri.Core.Abstractions;
+using Susurri.Core.DTO;
+using Susurri.Core.Exceptions;
 using Susurri.Infrastructure.Abstractions;
+using Susurri.Infrastructure.Security;
 
 namespace Susurri.Infrastructure.Commands.Handlers;
 
@@ -8,38 +12,39 @@ namespace Susurri.Infrastructure.Commands.Handlers;
 internal sealed class SignInHandler : ICommandHandler<SignIn>
 {
     private readonly IUserRepository _userRepository;
+    private readonly IAuthenticator _authenticator;
     private readonly IPasswordManager _passwordManager;
     private readonly IClock _clock;
+    private readonly ITokenStorage _tokenStorage;
 
-    public SignInHandler(IUserRepository userRepository, IPasswordManager passwordManager, IClock clock)
+    public SignInHandler(IUserRepository userRepository, IAuthenticator authenticator,
+        IPasswordManager passwordManager, IClock clock, ITokenStorage tokenStorage)
     {
         _userRepository = userRepository;
+        _authenticator = authenticator;
         _passwordManager = passwordManager;
         _clock = clock;
+        _tokenStorage = tokenStorage;
     }
 
     public async Task HandleAsync(SignIn command)
     {
-        // Retrieve the user from the repository using the username from the command
         var user = await _userRepository.GetByUsernameAsync(command.Username);
 
-        if (user == null)
+        if (user is null)
         {
-            // User with the provided username does not exist
-            // Here you can throw an Exception or handle it in any other appropriate way
-            throw new Exception("User not found");
+            throw new InvalidUsernameException(command.Username);
         }
-
-        // Validate the password provided in the command with the user's password hash 
+        
         var isValidPassword = _passwordManager.Validate(command.Password, user.Password);
 
         if (!isValidPassword)
         {
-            // Provided password did not match the user's password
-            // Handle this case appropriately, for example by throwing an exception
-            throw new Exception("Invalid password");
+            throw new InvalidPasswordException();
         }
+
+        var jwt = _authenticator.CreateToken(user.Id, user.Role);
+        _tokenStorage.Set(jwt);
         
-        await _userRepository.AddAsync(user);
     }
 }
