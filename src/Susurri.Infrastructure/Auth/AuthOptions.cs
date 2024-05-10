@@ -1,4 +1,4 @@
-namespace Susurri.Api.Auth;
+namespace Susurri.Infrastructure.Auth;
 
 public class AuthOptions
 {

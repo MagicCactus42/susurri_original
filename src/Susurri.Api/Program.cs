@@ -10,9 +10,6 @@ using Susurri.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddAuthentication();
-builder.Services.AddAuthorization();
-
 builder.Services.AddControllers();
 
 // Add services to the container.
@@ -36,7 +33,7 @@ builder.Services.AddCors();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddCore()
-    .AddInfrastructure()
+    .AddInfrastructure(builder.Configuration)
     .AddApplication();
 
 var app = builder.Build();
