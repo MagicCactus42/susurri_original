@@ -1,7 +1,5 @@
-using Microsoft.AspNetCore.Http.HttpResults;
 using Susurri.Application.Abstractions;
 using Susurri.Core.Abstractions;
-using Susurri.Core.DTO;
 using Susurri.Core.Exceptions;
 using Susurri.Infrastructure.Abstractions;
 using Susurri.Infrastructure.Security;
@@ -45,6 +43,5 @@ internal sealed class SignInHandler : ICommandHandler<SignIn>
 
         var jwt = _authenticator.CreateToken(user.Id, user.Role);
         _tokenStorage.Set(jwt);
-        
     }
 }

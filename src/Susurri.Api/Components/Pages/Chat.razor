@@ -6,6 +6,7 @@
 @using Susurri.Core.Entities
 @inject NavigationManager Navigation
 @implements IAsyncDisposable
+@inject ISusurriDbContext Context
 
 <PageTitle>Home</PageTitle>
 
@@ -59,7 +60,6 @@
     private readonly List<string> _privateMessages = new();
     private readonly List<string> _groupMessages = new();
     private bool IsInGroup { get; set; }
-    private readonly ISusurriDbContext _context;
     
     
     protected override async Task OnInitializedAsync()
@@ -82,8 +82,8 @@
             }
             await InvokeAsync(StateHasChanged);
             var dbMessage = new ChatMessage() { SenderUsername = user, Content = message };
-            _context.ChatMessages.Add(dbMessage);
-            await _context.SaveChangesAsync();
+            Context.ChatMessages.Add(dbMessage);
+            await Context.SaveChangesAsync();
         });
         await LoadMessagesFromDatabase();
         await _hubConnection.StartAsync();
@@ -91,7 +91,7 @@
     
     private async Task LoadMessagesFromDatabase()
     {
-        var messages = await _context.ChatMessages.ToListAsync();
+        var messages = await Context.ChatMessages.ToListAsync();
         foreach (var message in messages)
         {
             var encodedMsg = $"{message.SenderUsername}: {message.Content}";

@@ -21,6 +21,7 @@ public static class Extensions
         services.AddScoped<IClock, Clock>();
         services.AddScoped<IPasswordManager, PasswordManager>();
         services.AddScoped(typeof(ICommandHandler<SignUp>), typeof(SignUpHandler));
+        services.AddScoped(typeof(ICommandHandler<SignIn>), typeof(SignInHandler));
         services.AddSecurity();
         services.AddHttpContextAccessor();
         services.AddAuth(configuration);
