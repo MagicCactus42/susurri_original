@@ -22,6 +22,7 @@ public static class Extensions
         services.AddScoped<IPasswordManager, PasswordManager>();
         services.AddScoped(typeof(ICommandHandler<SignUp>), typeof(SignUpHandler));
         services.AddScoped(typeof(ICommandHandler<SignIn>), typeof(SignInHandler));
+        services.AddScoped<ExceptionMiddleware>();
         services.AddSecurity();
         services.AddHttpContextAccessor();
         services.AddAuth(configuration);

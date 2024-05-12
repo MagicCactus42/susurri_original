@@ -10,6 +10,7 @@ using Susurri.Infrastructure.Commands;
 namespace Susurri.Api.Controllers;
 
 [ApiController]
+[Route("api/[controller]")]
 public class UserController : ControllerBase
 {
    private readonly IQueryHandler<GetUsers, IEnumerable<UserDto>> _getUsersHandler;

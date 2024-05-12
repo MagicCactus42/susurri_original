@@ -19,7 +19,7 @@ internal static class Extensions
         var options = configuration.GetOptions<AuthOptions>(SectionName);
 
         services
-            .AddSingleton<IAuthenticator, Authenticator>()
+            .AddScoped<IAuthenticator, Authenticator>()
             .AddSingleton<ITokenStorage, HttpContextTokenStorage>()
             .AddAuthentication(x =>
             {
