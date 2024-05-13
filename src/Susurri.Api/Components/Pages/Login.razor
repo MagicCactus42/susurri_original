@@ -1,11 +1,54 @@
 @page "/login"
 @using System.ComponentModel.DataAnnotations
+@using Susurri.Api.Controllers
 @using Susurri.Core.Abstractions
 @using Susurri.Core.Models
+@using Susurri.Infrastructure.Commands
 @inject IUserService UserService
 @rendermode InteractiveServer
 
-<EditForm Model="@_model" OnValidSubmit="OnValidSubmit" FormName="">
+<EditForm Model="@_model" OnValidSubmit="OnValidRegisterSubmit" FormName="">
+    <DataAnnotationsValidator/>
+    <MudGrid>
+        <MudItem xs="12" sm="7">
+            <MudCard>
+                <MudCardContent>
+                    <MudTextField Label="First name" HelperText="Max. 8 characters"
+                                  @bind-Value="_model.Username" For="@(() => _model.Username)"/>
+                    <MudTextField Label="Password" HelperText="Choose a strong password" Class="mt-3"
+                                  @bind-Value="_model.Password" For="@(() => _model.Password)" InputType="InputType.Password"/>
+                    <MudTextField Label="Password" HelperText="Repeat the password" Class="mt-3"
+                                  @bind-Value="_model.Password2" For="@(() => _model.Password2)" InputType="InputType.Password"/>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Register</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+        <MudItem xs="12" sm="5">
+            <MudPaper Class="pa-4 mud-height-full">
+                <MudText Typo="Typo.subtitle2">Validation Summary</MudText>
+                @if (_success)
+                {
+                    <MudText Color="Color.Success">Success</MudText>
+                }
+                else
+                {
+                    <MudText Color="@Color.Error">
+                        <ValidationSummary />
+                    </MudText>
+                }
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12">
+            <MudText Typo="Typo.body2" Align="Align.Center">
+                Fill out the form correctly to see the success message.
+            </MudText>
+        </MudItem>
+    </MudGrid>
+</EditForm>
+
+<EditForm Model="@_model" OnValidSubmit="OnValidLoginSubmit" FormName="">
 <DataAnnotationsValidator/>
 <MudGrid>
     <MudItem xs="12" sm="7">
@@ -15,11 +58,9 @@
                               @bind-Value="_model.Username" For="@(() => _model.Username)"/>
                 <MudTextField Label="Password" HelperText="Choose a strong password" Class="mt-3"
                               @bind-Value="_model.Password" For="@(() => _model.Password)" InputType="InputType.Password"/>
-                <MudTextField Label="Password" HelperText="Repeat the password" Class="mt-3"
-                              @bind-Value="_model.Password2" For="@(() => _model.Password2)" InputType="InputType.Password"/>
             </MudCardContent>
             <MudCardActions>
-                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Register</MudButton>
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Login</MudButton>
             </MudCardActions>
         </MudCard>
     </MudItem>
@@ -68,7 +109,7 @@
 
     }
 
-    private async Task OnValidSubmit(EditContext context)
+    private async Task OnValidRegisterSubmit(EditContext context)
     {
         _success = true;
         
@@ -79,5 +120,11 @@
         });
 
         StateHasChanged();
+    }
+    private async Task OnValidLoginSubmit(EditContext context)
+    {
+        _success = true;
+        
+        
     }
 }
