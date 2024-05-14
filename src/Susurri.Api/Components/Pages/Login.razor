@@ -1,17 +1,16 @@
 @page "/login"
+
 @using System.ComponentModel.DataAnnotations
-@using Microsoft.AspNetCore.Authentication
-@using Microsoft.Extensions.DependencyInjection
 @using Susurri.Api.Controllers
 @using Susurri.Application.Abstractions
 @using Susurri.Core.Abstractions
-@using Susurri.Core.Entities
 @using Susurri.Core.Models
-@using Susurri.Core.Queries
 @using Susurri.Core.ValueObjects
 @using Susurri.Infrastructure.Commands
 @using Susurri.Infrastructure.Security
 @inject IUserService UserService
+@inject NavigationManager NavigationManager
+@inject UserController UserController
 @rendermode InteractiveServer
 
 <EditForm Model="@_model" OnValidSubmit="OnValidRegisterSubmit" FormName="">
@@ -97,10 +96,6 @@
 
 @code {
     readonly RegisterAccountForm _model = new();
-    private readonly IUserService _userService;
-    private readonly IAuthenticator _authenticator;
-    private readonly UserController _userController;
-    private readonly IUserRepository _userRepository;
     private bool _success;
     
     
@@ -134,14 +129,7 @@
     }
     private async Task OnValidLoginSubmit(EditContext context)
     {
-        var signInCommand = new SignIn(_model.Username, _model.Password);
-        if (_userService.UserExists(_model.Username) || _userService.ValidatePassword(_model.Username, _model.Password))
-        {
-            var userDto = _userRepository.GetInfoByUsernameAsync(_model.Username);
-            Guid userId = userDto.Id;
-            _authenticator.CreateToken(userId,new Role("user"));
-        }
-
-
+        var command = new SignIn(_model.Username, _model.Password);
+        await UserController.Post(command);
     }
 }
