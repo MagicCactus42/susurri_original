@@ -21,6 +21,7 @@ internal sealed class UserService : IUserService
     {
         return _context.Users.Any(x => x.Username == username);
     }
+    
 
     public async Task SaveUser(SignUpViewModel model)
     {

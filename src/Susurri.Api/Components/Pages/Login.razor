@@ -1,9 +1,16 @@
 @page "/login"
 @using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.Extensions.DependencyInjection
 @using Susurri.Api.Controllers
+@using Susurri.Application.Abstractions
 @using Susurri.Core.Abstractions
+@using Susurri.Core.Entities
 @using Susurri.Core.Models
+@using Susurri.Core.Queries
+@using Susurri.Core.ValueObjects
 @using Susurri.Infrastructure.Commands
+@using Susurri.Infrastructure.Security
 @inject IUserService UserService
 @rendermode InteractiveServer
 
@@ -90,6 +97,10 @@
 
 @code {
     readonly RegisterAccountForm _model = new();
+    private readonly IUserService _userService;
+    private readonly IAuthenticator _authenticator;
+    private readonly UserController _userController;
+    private readonly IUserRepository _userRepository;
     private bool _success;
     
     
@@ -123,8 +134,14 @@
     }
     private async Task OnValidLoginSubmit(EditContext context)
     {
-        _success = true;
-        
-        
+        var signInCommand = new SignIn(_model.Username, _model.Password);
+        if (_userService.UserExists(_model.Username) || _userService.ValidatePassword(_model.Username, _model.Password))
+        {
+            var userDto = _userRepository.GetInfoByUsernameAsync(_model.Username);
+            Guid userId = userDto.Id;
+            _authenticator.CreateToken(userId,new Role("user"));
+        }
+
+
     }
 }

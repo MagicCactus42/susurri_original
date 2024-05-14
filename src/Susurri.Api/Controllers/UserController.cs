@@ -55,7 +55,7 @@ public class UserController : ControllerBase
 
         var userId = Guid.Parse(User.Identity?.Name);
         var user = await _getUserHandler.HandleAsync(new GetUser {UserId = userId});
-
+        
         return user;
     }
 
