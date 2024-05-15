@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Susurri.Api.Commands;
 using Susurri.Application.Abstractions;
 using Susurri.Core.Abstractions;
 using Susurri.Core.DTO;
 using Susurri.Core.Queries;
 using Susurri.Infrastructure.Abstractions;
-using Susurri.Infrastructure.Commands;
 
 namespace Susurri.Api.Controllers;
 

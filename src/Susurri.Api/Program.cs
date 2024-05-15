@@ -1,12 +1,16 @@
 using Microsoft.AspNetCore.ResponseCompression;
 using MudBlazor.Services;
+using Susurri.Api.Commands;
+using Susurri.Api.Commands.Handlers;
 using Susurri.Api.Components;
+using Susurri.Api.Controllers;
 using Susurri.Api.Repositories;
 using Susurri.Application;
 using Susurri.Application.Abstractions;
 using Susurri.Core;
 using Susurri.Core.Hubs;
 using Susurri.Infrastructure;
+using Susurri.Infrastructure.Abstractions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +32,12 @@ builder.Services.AddResponseCompression(opts =>
 });
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<UserController>();
+
+builder.Services.AddTransient<SignInHandler>();
+builder.Services.AddTransient<SignUpHandler>();
+builder.Services.AddScoped(typeof(ICommandHandler<SignUp>), typeof(SignUpHandler));
+builder.Services.AddScoped(typeof(ICommandHandler<SignIn>), typeof(SignInHandler));
 
 builder.Services.AddCors();
 builder.Services.AddEndpointsApiExplorer();

@@ -1,30 +1,27 @@
 @page "/login"
 
 @using System.ComponentModel.DataAnnotations
+@using Susurri.Api.Commands
 @using Susurri.Api.Controllers
-@using Susurri.Application.Abstractions
 @using Susurri.Core.Abstractions
 @using Susurri.Core.Models
-@using Susurri.Core.ValueObjects
-@using Susurri.Infrastructure.Commands
-@using Susurri.Infrastructure.Security
 @inject IUserService UserService
 @inject NavigationManager NavigationManager
 @inject UserController UserController
 @rendermode InteractiveServer
 
-<EditForm Model="@_model" OnValidSubmit="OnValidRegisterSubmit" FormName="">
+<EditForm Model="@_registerModel" OnValidSubmit="OnValidRegisterSubmit" FormName="">
     <DataAnnotationsValidator/>
     <MudGrid>
         <MudItem xs="12" sm="7">
             <MudCard>
                 <MudCardContent>
-                    <MudTextField Label="First name" HelperText="Max. 8 characters"
-                                  @bind-Value="_model.Username" For="@(() => _model.Username)"/>
+                    <MudTextField Label="First name" HelperText="Max. 16 characters"
+                                  @bind-Value="_registerModel.Username" For="@(() => _registerModel.Username)"/>
                     <MudTextField Label="Password" HelperText="Choose a strong password" Class="mt-3"
-                                  @bind-Value="_model.Password" For="@(() => _model.Password)" InputType="InputType.Password"/>
+                                  @bind-Value="_registerModel.Password" For="@(() => _registerModel.Password)" InputType="InputType.Password"/>
                     <MudTextField Label="Password" HelperText="Repeat the password" Class="mt-3"
-                                  @bind-Value="_model.Password2" For="@(() => _model.Password2)" InputType="InputType.Password"/>
+                                  @bind-Value="_registerModel.Password2" For="@(() => _registerModel.Password2)" InputType="InputType.Password"/>
                 </MudCardContent>
                 <MudCardActions>
                     <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Register</MudButton>
@@ -34,7 +31,7 @@
         <MudItem xs="12" sm="5">
             <MudPaper Class="pa-4 mud-height-full">
                 <MudText Typo="Typo.subtitle2">Validation Summary</MudText>
-                @if (_success)
+                @if (_successRegister)
                 {
                     <MudText Color="Color.Success">Success</MudText>
                 }
@@ -54,16 +51,16 @@
     </MudGrid>
 </EditForm>
 
-<EditForm Model="@_model" OnValidSubmit="OnValidLoginSubmit" FormName="">
+<EditForm Model="@_loginModel" OnValidSubmit="OnValidLoginSubmit" FormName="">
 <DataAnnotationsValidator/>
 <MudGrid>
     <MudItem xs="12" sm="7">
         <MudCard>
             <MudCardContent>
-                <MudTextField Label="First name" HelperText="Max. 8 characters"
-                              @bind-Value="_model.Username" For="@(() => _model.Username)"/>
+                <MudTextField Label="First name" HelperText="Max. 16 characters"
+                              @bind-Value="_loginModel.Username" For="@(() => _loginModel.Username)"/>
                 <MudTextField Label="Password" HelperText="Choose a strong password" Class="mt-3"
-                              @bind-Value="_model.Password" For="@(() => _model.Password)" InputType="InputType.Password"/>
+                              @bind-Value="_loginModel.Password" For="@(() => _loginModel.Password)" InputType="InputType.Password"/>
             </MudCardContent>
             <MudCardActions>
                 <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Login</MudButton>
@@ -73,7 +70,7 @@
     <MudItem xs="12" sm="5">
         <MudPaper Class="pa-4 mud-height-full">
             <MudText Typo="Typo.subtitle2">Validation Summary</MudText>
-            @if (_success)
+            @if (_successLogin)
             {
                 <MudText Color="Color.Success">Success</MudText>
             }
@@ -95,14 +92,25 @@
 
 
 @code {
-    readonly RegisterAccountForm _model = new();
-    private bool _success;
-    
-    
+    readonly RegisterAccountForm _registerModel = new();
+    readonly LoginAccountForm _loginModel = new();
+    private bool _successRegister;
+    private bool _successLogin;
+
+    public class LoginAccountForm
+    {
+        [Required]
+        [StringLength(16, ErrorMessage = "Name length can't be more than 12.")]
+        public string Username { get; set; }
+
+        [Required]
+        [StringLength(30, ErrorMessage = "Password must be at least 8 characters long.", MinimumLength = 8)]
+        public string Password { get; set; }
+    }
     public class RegisterAccountForm
     {
         [Required]
-        [StringLength(8, ErrorMessage = "Name length can't be more than 12.")]
+        [StringLength(16, ErrorMessage = "Name length can't be more than 12.")]
         public string Username { get; set; }
 
         [Required]
@@ -117,19 +125,18 @@
 
     private async Task OnValidRegisterSubmit(EditContext context)
     {
-        _success = true;
-        
         await UserService.SaveUser(new SignUpViewModel
         {
-            Username = _model.Username,
-            Password = _model.Password
+            Username = _registerModel.Username,
+            Password = _registerModel.Password
         });
-
+        _successRegister= true;
         StateHasChanged();
     }
     private async Task OnValidLoginSubmit(EditContext context)
     {
-        var command = new SignIn(_model.Username, _model.Password);
+        var command = new SignIn(_loginModel.Username, _loginModel.Password);
+        _successLogin = true;
         await UserController.Post(command);
     }
 }

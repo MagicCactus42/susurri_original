@@ -4,7 +4,7 @@ using Susurri.Core.Exceptions;
 using Susurri.Infrastructure.Abstractions;
 using Susurri.Infrastructure.Security;
 
-namespace Susurri.Infrastructure.Commands.Handlers;
+namespace Susurri.Api.Commands.Handlers;
 
 
 internal sealed class SignInHandler : ICommandHandler<SignIn>
