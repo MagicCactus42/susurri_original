@@ -11,16 +11,21 @@ internal sealed class UserRepository : IUserRepository
 {
     private readonly List<User> _users = [];
     private readonly ISusurriDbContext _dbContext;
+
+    public UserRepository(ISusurriDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
     public async Task<User> GetByIdAsync(UserId id)
     {
         await Task.CompletedTask;
-        return _users.SingleOrDefault(x => x.Id == id);
+        return _dbContext.Users.SingleOrDefault(x => x.Id == id);
     }
 
     public async Task<User> GetByUsernameAsync(Username username)
     {
         await Task.CompletedTask;
-        return _users.SingleOrDefault(x => x.Username == username);
+        return _dbContext.Users.SingleOrDefault(x => x.Username == username);
     }
 
     public async Task<UserDto> GetInfoByUsernameAsync(Username username)
@@ -42,7 +47,7 @@ internal sealed class UserRepository : IUserRepository
 
     public async Task AddAsync(User user)
     {
-        _users.Add(user);
+        _dbContext.Users.Add(user);
         await Task.CompletedTask;
     }
     

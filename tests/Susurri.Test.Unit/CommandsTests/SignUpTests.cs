@@ -94,7 +94,7 @@ public class SignUpTests
     public SignUpTests()
     {
         _passwordManager = new PasswordManager(new MockPasswordHasher<User>());
-        _userRepository = new UserRepository();
+        _userRepository = new UserRepository(_context);
         _clock = new Clock();
         _context = new SusurriDbContext();
         _userService = new UserService(_context, _passwordManager);

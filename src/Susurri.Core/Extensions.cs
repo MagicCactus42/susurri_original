@@ -16,6 +16,7 @@ public static class Extensions
         services.AddScoped<ISusurriDbContext, SusurriDbContext>();
         services.AddTransient<IUserService, UserService>();
         services.AddScoped<IQueryHandler<GetUsers, IEnumerable<UserDto>>, GetUsersHandler>();
+        services.AddTransient<IQueryHandler<GetUser, UserDto>, GetUserHandler>();
         
         return services;
     }

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.ResponseCompression;
 using MudBlazor.Services;
+using Susurri.Api;
 using Susurri.Api.Commands;
 using Susurri.Api.Commands.Handlers;
 using Susurri.Api.Components;
@@ -65,5 +66,5 @@ app.UseResponseCompression();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 app.MapHub<ChatHub>("/chathub");
-
+app.UseUsersApi();
 await app.RunAsync();

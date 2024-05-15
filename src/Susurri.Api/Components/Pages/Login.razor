@@ -100,7 +100,7 @@
     public class LoginAccountForm
     {
         [Required]
-        [StringLength(16, ErrorMessage = "Name length can't be more than 12.")]
+        [StringLength(16, ErrorMessage = "Name length can't be more than 16.")]
         public string Username { get; set; }
 
         [Required]
@@ -110,7 +110,7 @@
     public class RegisterAccountForm
     {
         [Required]
-        [StringLength(16, ErrorMessage = "Name length can't be more than 12.")]
+        [StringLength(16, ErrorMessage = "Name length can't be more than 16.")]
         public string Username { get; set; }
 
         [Required]
