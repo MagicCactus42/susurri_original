@@ -1,11 +1,13 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Susurri.Core.Abstractions;
+using Susurri.Core.Entities;
 
 namespace Susurri.Core.Hubs;
 
+[Authorize]
 public class ChatHub : Hub<IChatClient>
 {
-    
     public async Task SendMessage(string user, string message)
     {
         await Clients.All.ReceiveMessage(user, message);
