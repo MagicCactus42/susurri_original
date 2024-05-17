@@ -3,7 +3,6 @@ using Susurri.Core.Abstractions;
 using Susurri.Core.Entities;
 using Susurri.Core.Exceptions;
 using Susurri.Core.ValueObjects;
-using Susurri.Infrastructure.Abstractions;
 
 namespace Susurri.Api.Commands.Handlers;
 

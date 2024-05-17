@@ -1,26 +1,27 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Susurri.Core.Abstractions;
-using Susurri.Core.Entities;
 
 namespace Susurri.Core.Hubs;
 
 [Authorize]
 public class ChatHub : Hub<IChatClient>
 {
-    public async Task SendMessage(string user, string message)
+    private readonly IUserRepository UserRepository;
+
+    public ChatHub(IUserRepository userRepository)
     {
-        await Clients.All.ReceiveMessage(user, message);
+        UserRepository = userRepository;
     }
 
-    public Task SendMessageToCaller(string user, string message)
+    public async Task SendMessage(string senderUsername,string recipientUsername, string message)
     {
-        return Clients.Caller.ReceiveMessage(user, message);
+        await Clients.Client(recipientUsername).ReceiveMessage(senderUsername, message);
     }
 
-    public Task SendMessageToGroups(string user, string message)
+    public Task SendMessageToGroups(string user, string message, string groupName)
     {
-        return Clients.Group("testGroup").ReceiveMessage(user, message);
+        return Clients.Group(groupName).ReceiveMessage(user, message);
     }
 
     public override async Task OnConnectedAsync()
@@ -33,17 +34,17 @@ public class ChatHub : Hub<IChatClient>
     {
         await base.OnDisconnectedAsync(exception);
     }
-    public async Task AddToGroup(string testGroup)
+    public async Task AddToGroup(string groupName)
     {
-        await Groups.AddToGroupAsync(Context.ConnectionId, testGroup);
+        await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
 
-        await Clients.Group(testGroup).ReceiveMessage(testGroup, $"{Context.ConnectionId} has joined the group {testGroup}.");
+        await Clients.Group(groupName).ReceiveMessage(groupName, $"{Context.ConnectionId} has joined the group {groupName}.");
     }
 
-    public async Task RemoveFromGroup(string testGroup)
+    public async Task RemoveFromGroup(string groupName)
     {
-        await Groups.RemoveFromGroupAsync(Context.ConnectionId, testGroup);
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
 
-        await Clients.Group(testGroup).ReceiveMessage(testGroup, $"{Context.ConnectionId} has left the group {testGroup}.");
+        await Clients.Group(groupName).ReceiveMessage(groupName, $"{Context.ConnectionId} has left the group {groupName}.");
     }
 }

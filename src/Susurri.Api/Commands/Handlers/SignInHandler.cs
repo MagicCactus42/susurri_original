@@ -1,7 +1,6 @@
 using Susurri.Application.Abstractions;
 using Susurri.Core.Abstractions;
 using Susurri.Core.Exceptions;
-using Susurri.Infrastructure.Abstractions;
 using Susurri.Infrastructure.Security;
 
 namespace Susurri.Api.Commands.Handlers;

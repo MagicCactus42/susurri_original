@@ -2,7 +2,7 @@ using Susurri.Core.DTO;
 using Susurri.Core.Entities;
 using Susurri.Core.ValueObjects;
 
-namespace Susurri.Application.Abstractions;
+namespace Susurri.Core.Abstractions;
 
 public interface IUserRepository
 {

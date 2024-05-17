@@ -1,4 +1,4 @@
-namespace Susurri.Infrastructure.Abstractions;
+namespace Susurri.Application.Abstractions;
 
 public interface ICommand
 {

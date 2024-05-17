@@ -9,9 +9,9 @@ using Susurri.Api.Repositories;
 using Susurri.Application;
 using Susurri.Application.Abstractions;
 using Susurri.Core;
+using Susurri.Core.Abstractions;
 using Susurri.Core.Hubs;
 using Susurri.Infrastructure;
-using Susurri.Infrastructure.Abstractions;
 
 var builder = WebApplication.CreateBuilder(args);
 
