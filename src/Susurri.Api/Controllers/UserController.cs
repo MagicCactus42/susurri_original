@@ -31,7 +31,9 @@ public class UserController : ControllerBase
         _tokenStorage = tokenStorage;
     }
     
+    
     [HttpGet("{userId:guid}")]
+    [Authorize(Policy = "is-dev")]
     public async Task<ActionResult<UserDto>> Get(Guid userId)
     {
         var user = await _getUserHandler.HandleAsync(new GetUser {UserId = userId});
@@ -43,7 +45,7 @@ public class UserController : ControllerBase
         return user;
     }
     
-    [Authorize]
+    
     [HttpGet("me")]
     public async Task<ActionResult<UserDto>> Get()
     {
@@ -59,6 +61,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Policy = "is-dev")]
     public async Task<ActionResult<IEnumerable<UserDto>>> Get([FromQuery] GetUsers query)
         => Ok(await _getUsersHandler.HandleAsync(query));
 

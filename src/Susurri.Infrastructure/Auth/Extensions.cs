@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
@@ -37,6 +38,14 @@ internal static class Extensions
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.SigningKey))
                 };
             });
+
+        services.AddAuthorization(x =>
+        {
+            x.AddPolicy("is-dev", policy =>
+            {
+                policy.RequireUserName("MagicCactus42");
+            });
+        });
         return services;
     }
 }
