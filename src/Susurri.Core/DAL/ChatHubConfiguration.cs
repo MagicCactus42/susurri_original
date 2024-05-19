@@ -12,6 +12,7 @@ internal sealed class ChatHubConfiguration : IEntityTypeConfiguration<ChatMessag
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Content).IsRequired().HasMaxLength(500);
         builder.Property(x => x.SenderUsername).IsRequired().HasMaxLength(100);
+        builder.Property(x => x.RecipientUsername).IsRequired().HasMaxLength(100);
         builder.Property(x => x.Timestamp).IsRequired();
         builder.Property(x => x.GroupId).IsRequired();
     } 

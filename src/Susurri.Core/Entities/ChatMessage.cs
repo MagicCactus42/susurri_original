@@ -9,5 +9,7 @@ public class ChatMessage
     public int Id { get; init; }
     public string Content { get; init; }
     public string SenderUsername { get; init; }
+    
+    public string RecipientUsername { get; init; }
     public DateTime Timestamp { get; private set; } = DateTime.UtcNow;
 }
