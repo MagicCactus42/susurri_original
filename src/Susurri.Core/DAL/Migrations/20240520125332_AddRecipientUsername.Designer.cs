@@ -2,18 +2,21 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Susurri.Core.DAL;
 
 #nullable disable
 
-namespace Susurri.Client.DAL.Migrations
+namespace Susurri.Core.DAL.Migrations
 {
     [DbContext(typeof(SusurriDbContext))]
-    partial class SusurriDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240520125332_AddRecipientUsername")]
+    partial class AddRecipientUsername
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

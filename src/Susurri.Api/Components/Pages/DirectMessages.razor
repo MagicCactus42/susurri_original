@@ -1,38 +1,46 @@
 @page "/dm"
-@rendermode InteractiveWebAssembly
+@rendermode InteractiveServer
 @inject NavigationManager Navigation
+@inject ISusurriDbContext Context
+@inject IOptions<AuthOptions> Options
+@inject ITokenStorage TokenStorage
 @using Susurri.Core.Abstractions
 @using Susurri.Core.Entities
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.Extensions.Options
+@using Susurri.Application.Abstractions
 @using Susurri.Infrastructure.Auth
 @implements IAsyncDisposable
-@inject ISusurriDbContext Context
 <h3>DirectMessages</h3>
 
 <div>
-    <input @bind="recipientUsername" placeholder="Recipient Username" />
-    <input @bind="message" placeholder="Message" />
+    <input @bind="_recipientUsername" placeholder="Recipient Username" />
+    <input @bind="_message" placeholder="Message" />
     <button @onclick="SendMessage">Send</button>
 </div>
 
 @code {
+    #nullable enable
     private HubConnection? _hubConnection;
-    private readonly ChatMessage _message;
-    private string? recipientUsername, message, senderUsername;
+    private string? _recipientUsername, _message, _senderUsername;
     private readonly List<string> messages = new();
-    private readonly IOptions<AuthOptions> options;
+    
     
     protected override async Task OnInitializedAsync()
     {
-        _hubConnection = new HubConnectionBuilder().WithUrl(Navigation.ToAbsoluteUri("/chathub")).Build();
+        _senderUsername = Options.Value.Issuer;
+
+        // var accessToken = TokenStorage.Get(); 
         
-        _hubConnection.On<string, string, string>("RecieveMessage", async (senderUsername, recipientUsername, message) =>
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(Navigation.ToAbsoluteUri("/chathub"))
+            .Build();
+        
+        _hubConnection.On<string, string, string>("RecieveMessage", async (_senderUsername, _recipientUsername, _message) =>
         {
-            senderUsername = options.Value.Issuer;
-            messages.Add($"{senderUsername} to {recipientUsername}: {message}");
+            messages.Add($"{_senderUsername} to {_recipientUsername}: {_message}");
             await InvokeAsync(StateHasChanged);
-            var dbMessage = new ChatMessage() { SenderUsername = senderUsername, RecipientUsername = recipientUsername, Content = message };
+            var dbMessage = new ChatMessage() { SenderUsername = _senderUsername, RecipientUsername = _recipientUsername, Content = _message };
             Context.ChatMessages.Add(dbMessage);
             await Context.SaveChangesAsync();
         });
@@ -52,10 +60,11 @@
     
     private async Task SendMessage()
     {
-        if (IsConnected && !string.IsNullOrEmpty(senderUsername) && !string.IsNullOrEmpty(recipientUsername) && !string.IsNullOrEmpty(message))
+        if (IsConnected && !string.IsNullOrEmpty(_senderUsername) && !string.IsNullOrEmpty(_recipientUsername) && !string.IsNullOrEmpty(_message))
         {
-            await _hubConnection.SendAsync("SendMessage", senderUsername, recipientUsername, message);
-            message = string.Empty;
+            if (_hubConnection is not null)
+                await _hubConnection.SendAsync("SendMessage", _senderUsername, _recipientUsername, _message);
+            _message = string.Empty;
         }
     }
 
