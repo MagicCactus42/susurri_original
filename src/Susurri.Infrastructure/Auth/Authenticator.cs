@@ -17,6 +17,7 @@ internal sealed class Authenticator : IAuthenticator
     private readonly TimeSpan _expiry;
     private readonly SigningCredentials _signinCredentials;
     private readonly JwtSecurityTokenHandler _jwtSecurityTokenHandler = new();
+    private readonly IUserRepository _userRepository;
 
     public Authenticator(IOptions<AuthOptions> options, IClock clock)
     {
@@ -29,17 +30,17 @@ internal sealed class Authenticator : IAuthenticator
             SecurityAlgorithms.HmacSha256);
     }
 
-    public JwtDto CreateToken(Guid userId, string role)
+    public JwtDto CreateToken(Guid userId, string username, string role)
     {
         var now = _clock.Current();
-        var expires = now.Add(_expiry);
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Sub, userId.ToString()),
-            new(JwtRegisteredClaimNames.UniqueName, userId.ToString()),
-            new(ClaimTypes.Role, role)
+            new(JwtRegisteredClaimNames.UniqueName, username),
+            new("role", role)
         };
-
+        
+        var expires = now.Add(_expiry);
         var jwt = new JwtSecurityToken(_issuer, _audience, claims, now, expires, _signinCredentials);
         var accessToken = _jwtSecurityTokenHandler.WriteToken(jwt);
 

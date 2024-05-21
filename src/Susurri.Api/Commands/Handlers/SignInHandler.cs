@@ -40,7 +40,7 @@ internal sealed class SignInHandler : ICommandHandler<SignIn>
             throw new InvalidPasswordException();
         }
 
-        var jwt = _authenticator.CreateToken(user.Id, user.Role);
+        var jwt = _authenticator.CreateToken(user.Id, user.Username, user.Role);
         _tokenStorage.Set(jwt);
     }
 }

@@ -32,6 +32,7 @@
 
         // var accessToken = TokenStorage.Get(); 
         
+        
         _hubConnection = new HubConnectionBuilder()
             .WithUrl(Navigation.ToAbsoluteUri("/chathub"))
             .Build();
