@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Susurri.Application.Abstractions;
 using Susurri.Core.Abstractions;
 using Susurri.Infrastructure.Security;
 using Susurri.Infrastructure.Time;
@@ -19,6 +20,7 @@ public static class Extensions
         services.AddScoped<IPasswordManager, PasswordManager>();
         services.AddSingleton<ExceptionMiddleware>();
         services.AddScoped<ExceptionMiddleware>();
+        services.AddScoped<ITokenStorage, HttpContextTokenStorage>();
         services.AddSecurity();
         services.AddHttpContextAccessor();
         services.AddAuth(configuration);

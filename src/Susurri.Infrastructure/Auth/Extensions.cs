@@ -29,13 +29,26 @@ internal static class Extensions
             })
             .AddJwtBearer(x =>
             {
+                x.Events = new JwtBearerEvents()
+                {
+                    OnTokenValidated = context =>
+                    {
+                        var user = context.Principal.Identity.Name;
+
+                        return Task.CompletedTask;
+                    }
+                };
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
                 x.Audience = options.Audience;
                 x.IncludeErrorDetails = true;
                 x.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidIssuer = options.Issuer,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.SigningKey)),
                     ClockSkew = TimeSpan.Zero,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.SigningKey))
+                    ValidateIssuer = false,
+                    ValidateAudience = false
                 };
             });
 

@@ -28,26 +28,42 @@
     
     protected override async Task OnInitializedAsync()
     {
-        _senderUsername = Options.Value.Issuer;
-
-        // var accessToken = TokenStorage.Get(); 
-        
-        
-        _hubConnection = new HubConnectionBuilder()
-            .WithUrl(Navigation.ToAbsoluteUri("/chathub"))
-            .Build();
-        
-        _hubConnection.On<string, string, string>("RecieveMessage", async (_senderUsername, _recipientUsername, _message) =>
+        if (Options == null || Options.Value == null)
         {
-            messages.Add($"{_senderUsername} to {_recipientUsername}: {_message}");
+            throw new InvalidOperationException("Options or Options.Value is not set.");
+        }
+    
+        _senderUsername = Options.Value.UniqueName;
+        
+        var jwtDto = TokenStorage?.Get();
+        var accessToken = jwtDto?.AccessToken;
+
+        if (string.IsNullOrEmpty(accessToken))
+        {
+            throw new InvalidOperationException("Access token is null or empty.");
+        }
+
+        Console.WriteLine($"Access Token Retrieved: {accessToken}");
+
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(Navigation.ToAbsoluteUri("/chathub"), options =>
+            {
+                options.AccessTokenProvider = () => Task.FromResult<string?>(accessToken);
+            })
+            .Build();
+    
+        _hubConnection.On<string, string, string>("ReceiveMessage", async (senderUsername, recipientUsername, message) =>
+        {
+            messages.Add($"{senderUsername} to {recipientUsername}: {message}");
             await InvokeAsync(StateHasChanged);
-            var dbMessage = new ChatMessage() { SenderUsername = _senderUsername, RecipientUsername = _recipientUsername, Content = _message };
+            var dbMessage = new ChatMessage() { SenderUsername = senderUsername, RecipientUsername = recipientUsername, Content = message };
             Context.ChatMessages.Add(dbMessage);
             await Context.SaveChangesAsync();
         });
         await LoadMessagesFromDatabase();
         await _hubConnection.StartAsync();
     }
+
 
     private async Task LoadMessagesFromDatabase()
     {

@@ -16,7 +16,14 @@ using Susurri.Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services
@@ -56,6 +63,7 @@ if (!app.Environment.IsDevelopment()) app.UseResponseCompression();
 
 app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
+app.UseSession();
 app.UseAuthentication();
 app.UseRouting();
 app.UseAuthorization();
