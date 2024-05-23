@@ -9,6 +9,7 @@
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.Extensions.Options
 @using Susurri.Application.Abstractions
+@using Susurri.Core.Exceptions
 @using Susurri.Infrastructure.Auth
 @implements IAsyncDisposable
 <h3>DirectMessages</h3>
@@ -30,7 +31,7 @@
     {
         if (Options == null || Options.Value == null)
         {
-            throw new InvalidOperationException("Options or Options.Value is not set.");
+            throw new NullOptionsException();
         }
     
         _senderUsername = Options.Value.UniqueName;
@@ -40,7 +41,7 @@
 
         if (string.IsNullOrEmpty(accessToken))
         {
-            throw new InvalidOperationException("Access token is null or empty.");
+            throw new EmptyJWTException();
         }
 
         Console.WriteLine($"Access Token Retrieved: {accessToken}");
