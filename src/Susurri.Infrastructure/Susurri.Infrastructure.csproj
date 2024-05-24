@@ -16,7 +16,7 @@
       <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="8.0.4" />
       <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.4" />
       <PackageReference Include="Microsoft.AspNetCore.SignalR.Client.Core" Version="8.0.4" />
-      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.5.1" />
+      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.5.2" />
     </ItemGroup>
 
 </Project>

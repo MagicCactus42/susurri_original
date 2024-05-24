@@ -1,6 +1,6 @@
 using Susurri.Core.DTO;
 
-namespace Susurri.Infrastructure.Security;
+namespace Susurri.Application.Abstractions;
 
 public interface IAuthenticator
 {

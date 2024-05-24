@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Susurri.Application.Abstractions;
 using Susurri.Core.Abstractions;
 using Susurri.Core.DTO;
 using Susurri.Infrastructure.Security;

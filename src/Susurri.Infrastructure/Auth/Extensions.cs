@@ -1,12 +1,10 @@
-using System.Net;
+
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Susurri.Application.Abstractions;
-using Susurri.Core.DAL;
-using Susurri.Infrastructure.Security;
 
 namespace Susurri.Infrastructure.Auth;
 
@@ -29,15 +27,6 @@ internal static class Extensions
             })
             .AddJwtBearer(x =>
             {
-                x.Events = new JwtBearerEvents()
-                {
-                    OnTokenValidated = context =>
-                    {
-                        var user = context.Principal.Identity.Name;
-
-                        return Task.CompletedTask;
-                    }
-                };
                 x.RequireHttpsMetadata = false;
                 x.SaveToken = true;
                 x.Audience = options.Audience;
