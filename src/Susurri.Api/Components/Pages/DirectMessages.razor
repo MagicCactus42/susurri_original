@@ -3,7 +3,8 @@
 @inject NavigationManager Navigation
 @inject ISusurriDbContext Context
 @inject IOptions<AuthOptions> Options
-@inject ITokenStorage TokenStorage
+@inject ILogger<DirectMessages> Logger
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 @using Susurri.Core.Abstractions
 @using Susurri.Core.Entities
 @using Microsoft.EntityFrameworkCore
@@ -11,8 +12,9 @@
 @using Susurri.Core.Exceptions
 @using Susurri.Infrastructure.Auth
 @using System.Net.Http.Headers
-@using Susurri.Application.Abstractions
+@using Susurri.Core.DTO
 @implements IAsyncDisposable
+
 <h3>DirectMessages</h3>
 
 <div>
@@ -26,43 +28,52 @@
     private HubConnection? _hubConnection;
     private string? _recipientUsername, _message, _senderUsername;
     private readonly List<string> messages = new();
-    
-    
+    private bool _isInitialized = false;
+
     protected override async Task OnInitializedAsync()
     {
         if (Options == null || Options.Value == null)
         {
             throw new NullOptionsException();
         }
-    
+
         _senderUsername = Options.Value.UniqueName;
-        
-        var jwtDto = TokenStorage.Get().ToString();
-
-        if (string.IsNullOrEmpty(jwtDto))
-        {
-            throw new EmptyJWTException();
-        }
-
-        HttpClient httpClient = new HttpClient();
-        httpClient.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue("Bearer", jwtDto);
-
-        _hubConnection = new HubConnectionBuilder()
-            .WithUrl(Navigation.ToAbsoluteUri("/chathub")).Build();
-    
-        _hubConnection.On<string, string, string>("ReceiveMessage", async (senderUsername, recipientUsername, message) =>
-        {
-            messages.Add($"{senderUsername} to {recipientUsername}: {message}");
-            await InvokeAsync(StateHasChanged);
-            var dbMessage = new ChatMessage() { SenderUsername = senderUsername, RecipientUsername = recipientUsername, Content = message };
-            Context.ChatMessages.Add(dbMessage);
-            await Context.SaveChangesAsync();
-        });
         await LoadMessagesFromDatabase();
-        await _hubConnection.StartAsync();
     }
-    
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var accessToken = await LocalStorage.GetItemAsync<JwtDto>("token");
+            if (accessToken == null)
+            {
+                throw new EmptyJWTException();
+            }
+            Logger.LogInformation("JWT retrieved successfully: {AccessToken}", accessToken.AccessToken);
+
+            var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", accessToken.AccessToken);
+
+            _hubConnection = new HubConnectionBuilder()
+                .WithUrl(Navigation.ToAbsoluteUri("/chathub")).Build();
+
+            _hubConnection.On<string, string, string>("ReceiveMessage", async (senderUsername, recipientUsername, message) =>
+            {
+                messages.Add($"{senderUsername} to {recipientUsername}: {message}");
+                await InvokeAsync(StateHasChanged);
+                var dbMessage = new ChatMessage() { SenderUsername = senderUsername, RecipientUsername = recipientUsername, Content = message };
+                Context.ChatMessages.Add(dbMessage);
+                await Context.SaveChangesAsync();
+            });
+
+            await _hubConnection.StartAsync();
+            _isInitialized = true;
+            StateHasChanged();
+        }
+    }
+
     private async Task LoadMessagesFromDatabase()
     {
         var dbMessages = await Context.ChatMessages.ToListAsync();
@@ -72,7 +83,7 @@
             messages.Add(encodedMsg);
         }
     }
-    
+
     private async Task SendMessage()
     {
         if (IsConnected && !string.IsNullOrEmpty(_senderUsername) && !string.IsNullOrEmpty(_recipientUsername) && !string.IsNullOrEmpty(_message))
@@ -84,7 +95,7 @@
     }
 
     private bool IsConnected => _hubConnection?.State == HubConnectionState.Connected;
-    
+
     public async ValueTask DisposeAsync()
     {
         if (_hubConnection is not null)
