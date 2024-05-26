@@ -3,11 +3,13 @@
 @using System.ComponentModel.DataAnnotations
 @using Susurri.Api.Commands
 @using Susurri.Api.Controllers
+@using Susurri.Application.Abstractions
 @using Susurri.Core.Abstractions
 @using Susurri.Core.Models
 @inject IUserService UserService
-@inject NavigationManager NavigationManager
+@inject ILocalStorageService LocalStorage
 @inject UserController UserController
+@inject ITokenStorage TokenStorage
 @rendermode InteractiveServer
 
 <EditForm Model="@_registerModel" OnValidSubmit="OnValidRegisterSubmit" FormName="">
@@ -137,6 +139,8 @@
     {
         var command = new SignIn(_loginModel.Username, _loginModel.Password);
         _successLogin = true;
+        var jwt = TokenStorage.Get();
+        await LocalStorage.SetItemAsync("token", jwt);
         await UserController.Post(command);
     }
 }
