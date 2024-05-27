@@ -12,7 +12,9 @@
 @using Susurri.Infrastructure.Auth
 @using System.Net.Http.Headers
 @using Susurri.Core.DTO
+@using Susurri.Infrastructure.Clients
 @implements IAsyncDisposable
+
 <h3>DirectMessages</h3>
 
 <div>
@@ -26,42 +28,48 @@
     private HubConnection? _hubConnection;
     private string? _recipientUsername, _message, _senderUsername;
     private readonly List<string> messages = new();
+    private bool _isInitialized = false;
     
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (Options == null || Options.Value == null)
+        if (firstRender && !_isInitialized)
         {
-            throw new NullOptionsException();
-        }
-    
-        _senderUsername = Options.Value.UniqueName;
+            if (Options == null || Options.Value == null)
+            {
+                throw new NullOptionsException();
+            }
         
-        var token = await LocalStorage.GetItemAsync<JwtDto>("token");
-        
-        if (token is null)
-        {
-            throw new EmptyJWTException();
-        }
+            _senderUsername = Options.Value.UniqueName;
+            
+            var token = await LocalStorage.GetItemAsync<JwtDto>("token");
+            
+            if (token is null)
+            {
+                throw new EmptyJWTException();
+            }
 
-        var stringToken = token.ToString();
-        
-        HttpClient httpClient = new HttpClient();
-        httpClient.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue("Bearer", stringToken);
+            var stringToken = token.ToString();
+            
+            HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", stringToken);
 
-        _hubConnection = new HubConnectionBuilder()
-            .WithUrl(Navigation.ToAbsoluteUri("/chathub")).Build();
-    
-        _hubConnection.On<string, string, string>("ReceiveMessage", async (senderUsername, recipientUsername, message) =>
-        {
-            messages.Add($"{senderUsername} to {recipientUsername}: {message}");
-            await InvokeAsync(StateHasChanged);
-            var dbMessage = new ChatMessage() { SenderUsername = senderUsername, RecipientUsername = recipientUsername, Content = message };
-            Context.ChatMessages.Add(dbMessage);
-            await Context.SaveChangesAsync();
-        });
-        await LoadMessagesFromDatabase();
-        await _hubConnection.StartAsync();
+            _hubConnection = new HubConnectionBuilder()
+                .WithUrl(Navigation.ToAbsoluteUri("/chathub")).Build();
+        
+            _hubConnection.On<string, string, string>("ReceiveMessage", async (senderUsername, recipientUsername, message) =>
+            {
+                messages.Add($"{senderUsername} to {recipientUsername}: {message}");
+                await InvokeAsync(StateHasChanged);
+                var dbMessage = new ChatMessage() { SenderUsername = senderUsername, RecipientUsername = recipientUsername, Content = message };
+                Context.ChatMessages.Add(dbMessage);
+                await Context.SaveChangesAsync();
+            });
+            await LoadMessagesFromDatabase();
+            await _hubConnection.StartAsync();
+
+            _isInitialized = true;
+        }
     }
     
     private async Task LoadMessagesFromDatabase()

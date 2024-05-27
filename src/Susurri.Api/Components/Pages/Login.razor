@@ -5,7 +5,9 @@
 @using Susurri.Api.Controllers
 @using Susurri.Application.Abstractions
 @using Susurri.Core.Abstractions
+@using Susurri.Core.DTO
 @using Susurri.Core.Models
+@using Susurri.Infrastructure.Clients
 @inject IUserService UserService
 @inject ILocalStorageService LocalStorage
 @inject UserController UserController
@@ -125,6 +127,12 @@
 
     }
 
+    protected override async Task OnInitializedAsync()
+    {
+        await GetProfileAsync();
+        await base.OnInitializedAsync();
+    }
+
     private async Task OnValidRegisterSubmit(EditContext context)
     {
         await UserService.SaveUser(new SignUpViewModel
@@ -139,8 +147,19 @@
     {
         var command = new SignIn(_loginModel.Username, _loginModel.Password);
         _successLogin = true;
-        var jwt = TokenStorage.Get();
-        await LocalStorage.SetItemAsync("token", jwt);
+        var token = await UserController.Post(command);
         await UserController.Post(command);
+        await LocalStorage.SetItemAsync("token", token);
+    }
+    
+    private async Task GetProfileAsync()
+    {
+        var token = await ApiClient.GetProfileAsync();
+        
+        if (token is null)
+        {
+            return;
+        }
+        await LocalStorage.SetItemAsync("token", token);
     }
 }

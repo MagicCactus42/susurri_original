@@ -7,7 +7,7 @@ public class ApiClient
 {
     private readonly HttpClient _httpClient;
 
-    private const string Host = "https://localhost:7083";
+    private const string Host = "https://localhost:7083/";
 
     public ApiClient(HttpClient httpClient)
     {
@@ -16,7 +16,7 @@ public class ApiClient
     }
     public async Task<JwtDto> GetProfileAsync()
     {
-        var response = await _httpClient.GetAsync("/me");
+        var response = await _httpClient.GetAsync($"api/User/token/");
 
         if (response.IsSuccessStatusCode is false)
         {

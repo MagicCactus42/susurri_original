@@ -4,6 +4,7 @@ using Susurri.Api.Commands;
 using Susurri.Application.Abstractions;
 using Susurri.Core.Abstractions;
 using Susurri.Core.DTO;
+using Susurri.Core.Exceptions;
 using Susurri.Core.Queries;
 
 namespace Susurri.Api.Controllers;
@@ -17,18 +18,20 @@ public class UserController : ControllerBase
     private readonly ICommandHandler<SignUp> _signUpHandler;
     private readonly ICommandHandler<SignIn> _signInHandler;
     private readonly ITokenStorage _tokenStorage;
+    private readonly IAuthenticator _authenticator;
 
     public UserController(ICommandHandler<SignUp> signUpHandler,
         ICommandHandler<SignIn> signInHandler,
         IQueryHandler<GetUsers, IEnumerable<UserDto>> getUsersHandler,
         IQueryHandler<GetUser, UserDto> getUserHandler,
-        ITokenStorage tokenStorage)
+        ITokenStorage tokenStorage, IAuthenticator authenticator)
     {
         _signUpHandler = signUpHandler;
         _signInHandler = signInHandler;
         _getUsersHandler = getUsersHandler;
         _getUserHandler = getUserHandler;
         _tokenStorage = tokenStorage;
+        _authenticator = authenticator;
     }
     
     
@@ -58,6 +61,23 @@ public class UserController : ControllerBase
         var user = await _getUserHandler.HandleAsync(new GetUser {UserId = userId});
         
         return user;
+    }
+
+    [HttpGet("token/{username}")]
+    public async Task<ActionResult<JwtDto>> GetToken(string username)
+    {
+        if (string.IsNullOrWhiteSpace(User.Identity?.Name))
+        {
+            return NotFound();
+        }
+        
+        var userId = Guid.Parse(User.Identity?.Name);
+        var jwtToken = _authenticator.CreateToken(userId, username, "user");
+
+        if (jwtToken is null)
+            throw new EmptyJWTException();
+        
+        return jwtToken;
     }
 
     [HttpGet]
