@@ -1,8 +1,23 @@
 # Susurri - Messenger web application with E2E encryption
 
+[![100 - commitow](https://img.shields.io/badge/100%20-commitow-lightgreen.svg)](https://100commitow.pl)
+
+[![NuGet Package](https://img.shields.io/badge/.NET%20-8.0-blue.svg)](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+
 Anonymity is the key to honest communication,
 
-Most people don't appreciate anonymity before they lose it, and you only get to lose it once. Susurri will help you keep it as long as possible. Messages will be encrypted end-to-end using AES, and the login system will make sure no one will be able to access your account. 
+Most people don't appreciate anonymity before they lose it, and you only get to lose it once. Susurri will help you keep it as long as possible. Messages will be encrypted end-to-end using AES, and the login system will make sure no one will be able to access your account.
+
+![Logo](https://cdn.discordapp.com/attachments/663447127502094356/1245370086857113701/image.png?ex=665880c6&is=66572f46&hm=63bd4a5060653fbb25fd4f78016bfbc70b0e2b248f855f7da6970df3e51dc216&)
+
+
+## About me and the Susurri
+
+Hello, this is "MagicCactus42," though my real name is Michał. I am 19 years old, and this year I graduated from high school and wrote my matura exams. I am also the younger brother of one of the Devmentors, Goorion.
+
+I started working on Susurri during the "100 commitów" competition organized by Devmentors, and it is my first application. I began with virtually no knowledge, but I believe I have made progress and developed a genuine enthusiasm for learning to code.
+
+Unfortunately, I won't be able to deliver all the features I initially outlined for the project; I overestimated my capabilities. However, I will do my best to have the website up and running before the project's deadline, allowing users to at least send messages after logging in. After the "100 commitów" competition concludes, I will continue to develop Susurri, as it has become an enjoyable endeavor for me.
 
 ## What features will it have?
 
@@ -12,12 +27,6 @@ The list of features is not strict, some may be added or removed later in the pr
 - Push notifications
 - Intuitive and aesthetic UI
 - etc.
-
-## Other information
-
-- Readme will be updated on an ongoing basis
-- This will be my first project ever written
-- I am just beginning my journey with programming so I will be learning throughout the entire period of making this app to make it work
 
 ## Coming soon
 - Graphic visualization of the project
