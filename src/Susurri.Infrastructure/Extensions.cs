@@ -7,7 +7,6 @@ using Susurri.Core.Abstractions;
 using Susurri.Infrastructure.Security;
 using Susurri.Infrastructure.Time;
 using Susurri.Infrastructure.Auth;
-using Susurri.Infrastructure.Clients;
 using Susurri.Infrastructure.Exceptions;
 
 namespace Susurri.Infrastructure;
@@ -23,8 +22,6 @@ public static class Extensions
         services.AddScoped<ExceptionMiddleware>();
         services.AddHttpContextAccessor();
         services.AddBlazoredLocalStorage();
-        services.AddScoped(x => new ApiClient(x.GetRequiredService<HttpClient>()));
-        services.AddHttpClient<ApiClient>();
         services.AddScoped<ITokenStorage, HttpContextTokenStorage>();
         services.AddSecurity();
         services.AddAuth(configuration);
