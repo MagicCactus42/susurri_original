@@ -76,7 +76,7 @@ public class UserController : ControllerBase
 
         if (jwtToken is null)
             throw new EmptyJWTException();
-        
+        await Task.CompletedTask;
         return jwtToken;
     }
 

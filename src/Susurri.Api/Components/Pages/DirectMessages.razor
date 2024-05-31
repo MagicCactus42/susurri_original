@@ -4,6 +4,7 @@
 @inject ISusurriDbContext Context
 @inject IOptions<AuthOptions> Options
 @inject ILocalStorageService LocalStorage
+@inject UserController UserController
 @using Susurri.Core.Abstractions
 @using Susurri.Core.Entities
 @using Microsoft.EntityFrameworkCore
@@ -11,11 +12,52 @@
 @using Susurri.Core.Exceptions
 @using Susurri.Infrastructure.Auth
 @using System.Net.Http.Headers
+@using Susurri.Api.Commands
+@using Susurri.Api.Controllers
 @using Susurri.Core.DTO
+@using System.ComponentModel.DataAnnotations
 @implements IAsyncDisposable
 
-<h3>DirectMessages</h3>
+<EditForm Model="@_loginModel" OnValidSubmit="OnValidLoginSubmit" FormName="">
+    <DataAnnotationsValidator/>
+    <MudGrid>
+        <MudItem xs="12" sm="7">
+            <MudCard>
+                <MudCardContent>
+                    <MudTextField Label="First name" HelperText="Max. 16 characters"
+                                  @bind-Value="_loginModel.Username" For="@(() => _loginModel.Username)"/>
+                    <MudTextField Label="Password" HelperText="Choose a strong password" Class="mt-3"
+                                  @bind-Value="_loginModel.Password" For="@(() => _loginModel.Password)" InputType="InputType.Password"/>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Login</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+        <MudItem xs="12" sm="5">
+            <MudPaper Class="pa-4 mud-height-full">
+                <MudText Typo="Typo.subtitle2">Validation Summary</MudText>
+                @if (_successLogin)
+                {
+                    <MudText Color="Color.Success">Success</MudText>
+                }
+                else
+                {
+                    <MudText Color="@Color.Error">
+                        <ValidationSummary />
+                    </MudText>
+                }
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12">
+            <MudText Typo="Typo.body2" Align="Align.Center">
+                Fill out the form correctly to see the success message.
+            </MudText>
+        </MudItem>
+    </MudGrid>
+</EditForm>
 
+<h3>DirectMessages</h3>
 <div>
     <input @bind="_recipientUsername" placeholder="Recipient Username" />
     <input @bind="_message" placeholder="Message" />
@@ -28,10 +70,13 @@
     private string? _recipientUsername, _message, _senderUsername;
     private readonly List<string> messages = new();
     private bool _isInitialized = false;
+    readonly LoginAccountForm _loginModel = new();
+    private bool _successLogin;
+    private bool _loggedIn = false; // Flag to check if the user is logged in
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && !_isInitialized)
+        if (firstRender && !_isInitialized && _loggedIn) // Check if the user is logged in
         {
             if (Options == null || Options.Value == null)
             {
@@ -58,6 +103,7 @@
         
             _hubConnection.On<string, string, string>("ReceiveMessage", async (senderUsername, recipientUsername, message) =>
             {
+                senderUsername = _senderUsername;
                 messages.Add($"{senderUsername} to {recipientUsername}: {message}");
                 await InvokeAsync(StateHasChanged);
                 var dbMessage = new ChatMessage() { SenderUsername = senderUsername, RecipientUsername = recipientUsername, Content = message };
@@ -69,6 +115,27 @@
 
             _isInitialized = true;
         }
+    }
+    
+    public class LoginAccountForm
+    {
+        [Required]
+        [StringLength(16, ErrorMessage = "Name length can't be more than 16.")]
+        public string? Username { get; set; }
+
+        [Required]
+        [StringLength(30, ErrorMessage = "Password must be at least 8 characters long.", MinimumLength = 8)]
+        public string? Password { get; set; }
+    }
+    
+    private async Task OnValidLoginSubmit(EditContext context)
+    {
+        var command = new SignIn(_loginModel.Username, _loginModel.Password);
+        _successLogin = true;
+        var token = await UserController.Post(command);
+        await LocalStorage.SetItemAsync("token", token);
+        _loggedIn = true; // Set the flag to true upon successful login
+        StateHasChanged(); // Trigger a re-render
     }
     
     private async Task LoadMessagesFromDatabase()
