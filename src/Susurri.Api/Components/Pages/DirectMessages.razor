@@ -5,6 +5,7 @@
 @inject IOptions<AuthOptions> Options
 @inject ILocalStorageService LocalStorage
 @inject UserController UserController
+@inject ILogger<DirectMessages> Logger
 @using Susurri.Core.Abstractions
 @using Susurri.Core.Entities
 @using Microsoft.EntityFrameworkCore
@@ -57,66 +58,125 @@
     </MudGrid>
 </EditForm>
 
-<h3>DirectMessages</h3>
-<div>
-    <input @bind="_recipientUsername" placeholder="Recipient Username" />
-    <input @bind="_message" placeholder="Message" />
-    <button @onclick="SendMessage">Send</button>
-</div>
+<MudPaper Class="pa-4 mud-height-full">
+    <MudGrid>
+        <MudItem xs="12">
+            <MudTextField Label="Recipient username" @bind-Value="_recipientUsername"/>
+        </MudItem>
+        <MudItem xs="12">
+            <MudTextField Label="Message" @bind-Value="_message" Lines="1" MaxLines="5"/>
+        </MudItem>
+        <MudItem xs="12">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="SendMessage">
+                Send Direct Message
+            </MudButton>
+        </MudItem>
+        <MudItem xs="12">
+            @if (!string.IsNullOrEmpty(_debugMessage))
+            {
+                <MudAlert Severity="Severity.Info">@_debugMessage</MudAlert>
+            }
+        </MudItem>
+    </MudGrid>
+</MudPaper>
+
+<MudPaper Class="pa-4 mud-height-full">
+    <MudText Typo="Typo.h4">Private Messages</MudText>
+    <MudList>
+        @foreach (var message in messages)
+        {
+            <MudListItem>@message</MudListItem>
+        }
+    </MudList>
+</MudPaper>
 
 @code {
     #nullable enable
     private HubConnection? _hubConnection;
-    private string? _recipientUsername, _message, _senderUsername;
+    private string? _recipientUsername, _message;
     private readonly List<string> messages = new();
-    private bool _isInitialized = false;
+    private bool _isInitialized;
     readonly LoginAccountForm _loginModel = new();
     private bool _successLogin;
-    private bool _loggedIn = false; // Flag to check if the user is logged in
-    
+    private bool _loggedIn;
+    private string? _debugMessage;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && !_isInitialized && _loggedIn) // Check if the user is logged in
+        if (!_isInitialized && _loggedIn)
         {
+            Logger.LogInformation("First render and user is logged in.");
+            _debugMessage = "First render and user is logged in.";
+
             if (Options == null || Options.Value == null)
             {
+                Logger.LogError("Options or Options.Value is null.");
+                _debugMessage = "Options or Options.Value is null.";
                 throw new NullOptionsException();
             }
-        
-            _senderUsername = Options.Value.UniqueName;
-            
+
             var token = await LocalStorage.GetItemAsync<JwtDto>("token");
-            
+
             if (token is null)
             {
+                Logger.LogError("JWT token is null.");
+                _debugMessage = "JWT token is null.";
                 throw new EmptyJWTException();
             }
 
             var stringToken = token.ToString();
-            
+            Logger.LogInformation("Token retrieved from local storage.");
+            _debugMessage = "Token retrieved from local storage.";
+
             HttpClient httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", stringToken);
 
+            var hubUrl = Navigation.ToAbsoluteUri("/chathub").ToString();
+            Logger.LogInformation($"Hub URL: {hubUrl}");
+            _debugMessage = $"Hub URL: {hubUrl}";
+
             _hubConnection = new HubConnectionBuilder()
-                .WithUrl(Navigation.ToAbsoluteUri("/chathub")).Build();
-        
+                .WithUrl(hubUrl, options =>
+                {
+                    options.AccessTokenProvider = () => Task.FromResult(stringToken);
+                })
+                .Build();
+
+            Logger.LogInformation("Hub connection created.");
+
             _hubConnection.On<string, string, string>("ReceiveMessage", async (senderUsername, recipientUsername, message) =>
             {
-                senderUsername = _senderUsername;
+                Logger.LogInformation($"Message received: {senderUsername} to {recipientUsername}: {message}");
+                _debugMessage = $"Message received: {senderUsername} to {recipientUsername}: {message}";
                 messages.Add($"{senderUsername} to {recipientUsername}: {message}");
                 await InvokeAsync(StateHasChanged);
                 var dbMessage = new ChatMessage() { SenderUsername = senderUsername, RecipientUsername = recipientUsername, Content = message };
                 Context.ChatMessages.Add(dbMessage);
                 await Context.SaveChangesAsync();
             });
+
+            try
+            {
+                await _hubConnection.StartAsync();
+                Logger.LogInformation("Hub connection started.");
+                _debugMessage = "Hub connection started.";
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"Error starting hub connection: {ex.Message}");
+                _debugMessage = $"Error starting hub connection: {ex.Message}";
+            }
+
             await LoadMessagesFromDatabase();
-            await _hubConnection.StartAsync();
+            Logger.LogInformation("Messages loaded from the database.");
+            _debugMessage = "Messages loaded from the database.";
 
             _isInitialized = true;
+            StateHasChanged();
         }
     }
-    
+
     public class LoginAccountForm
     {
         [Required]
@@ -127,42 +187,80 @@
         [StringLength(30, ErrorMessage = "Password must be at least 8 characters long.", MinimumLength = 8)]
         public string? Password { get; set; }
     }
-    
+
     private async Task OnValidLoginSubmit(EditContext context)
     {
         var command = new SignIn(_loginModel.Username, _loginModel.Password);
         _successLogin = true;
         var token = await UserController.Post(command);
         await LocalStorage.SetItemAsync("token", token);
-        _loggedIn = true; // Set the flag to true upon successful login
-        StateHasChanged(); // Trigger a re-render
+        _loggedIn = true;
+        Logger.LogInformation("User logged in successfully.");
+        _debugMessage = "User logged in successfully.";
+        StateHasChanged();
     }
-    
+
     private async Task LoadMessagesFromDatabase()
     {
+        Logger.LogInformation("Loading messages from the database.");
+        _debugMessage = "Loading messages from the database.";
         var dbMessages = await Context.ChatMessages.ToListAsync();
         foreach (var msg in dbMessages)
         {
             var encodedMsg = $"{msg.SenderUsername} to {msg.RecipientUsername}: {msg.Content}";
             messages.Add(encodedMsg);
         }
+        Logger.LogInformation("Messages loaded from the database.");
+        _debugMessage = "Messages loaded from the database.";
     }
-    
+
     private async Task SendMessage()
     {
-        if (IsConnected && !string.IsNullOrEmpty(_senderUsername) && !string.IsNullOrEmpty(_recipientUsername) && !string.IsNullOrEmpty(_message))
+        var senderUsername = Options?.Value?.UniqueName;
+        Logger.LogInformation($"Attempting to send message as {senderUsername}.");
+        _debugMessage = $"Attempting to send message as {senderUsername}.";
+        StateHasChanged();
+
+        if (_hubConnection is null)
         {
-            if (_hubConnection is not null)
-                await _hubConnection.SendAsync("SendMessage", _senderUsername, _recipientUsername, _message);
-            _message = string.Empty;
+            Logger.LogError("Hub connection is null.");
+            _debugMessage = "Hub connection is null.";
+            StateHasChanged();
+            return;
+        }
+
+        if (IsConnected && !string.IsNullOrEmpty(senderUsername) && !string.IsNullOrEmpty(_recipientUsername) && !string.IsNullOrEmpty(_message))
+        {
+            try
+            {
+                Logger.LogInformation($"Sending message to {_recipientUsername}: {_message}");
+                _debugMessage = $"Sending message to {_recipientUsername}: {_message}";
+                StateHasChanged();
+
+                await _hubConnection.SendAsync("SendMessage", senderUsername, _recipientUsername, _message);
+
+                _message = string.Empty;
+                Logger.LogInformation("Message sent successfully.");
+                _debugMessage = "Message sent successfully.";
+                StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"Error sending message: {ex.Message}");
+                _debugMessage = $"Error sending message: {ex.Message}";
+                StateHasChanged();
+            }
         }
     }
 
     private bool IsConnected => _hubConnection?.State == HubConnectionState.Connected;
-    
+
     public async ValueTask DisposeAsync()
     {
         if (_hubConnection is not null)
+        {
+            Logger.LogInformation("Disposing hub connection.");
             await _hubConnection.DisposeAsync();
+        }
     }
 }
