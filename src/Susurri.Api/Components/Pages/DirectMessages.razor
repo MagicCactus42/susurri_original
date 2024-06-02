@@ -83,7 +83,7 @@
 <MudPaper Class="pa-4 mud-height-full">
     <MudText Typo="Typo.h4">Private Messages</MudText>
     <MudList>
-        @foreach (var message in messages)
+        @foreach (var message in _messages)
         {
             <MudListItem>@message</MudListItem>
         }
@@ -94,7 +94,7 @@
     #nullable enable
     private HubConnection? _hubConnection;
     private string? _recipientUsername, _message;
-    private readonly List<string> messages = new();
+    private readonly List<string> _messages = new();
     private bool _isInitialized;
     readonly LoginAccountForm _loginModel = new();
     private bool _successLogin;
@@ -149,7 +149,7 @@
             {
                 Logger.LogInformation($"Message received: {senderUsername} to {recipientUsername}: {message}");
                 _debugMessage = $"Message received: {senderUsername} to {recipientUsername}: {message}";
-                messages.Add($"{senderUsername} to {recipientUsername}: {message}");
+                _messages.Add($"{senderUsername} to {recipientUsername}: {message}");
                 await InvokeAsync(StateHasChanged);
                 var dbMessage = new ChatMessage() { SenderUsername = senderUsername, RecipientUsername = recipientUsername, Content = message };
                 Context.ChatMessages.Add(dbMessage);
@@ -208,7 +208,7 @@
         foreach (var msg in dbMessages)
         {
             var encodedMsg = $"{msg.SenderUsername} to {msg.RecipientUsername}: {msg.Content}";
-            messages.Add(encodedMsg);
+            _messages.Add(encodedMsg);
         }
         Logger.LogInformation("Messages loaded from the database.");
         _debugMessage = "Messages loaded from the database.";
@@ -216,7 +216,7 @@
 
     private async Task SendMessage()
     {
-        var senderUsername = Options?.Value?.UniqueName;
+        var senderUsername = Options?.Value.UniqueName;
         Logger.LogInformation($"Attempting to send message as {senderUsername}.");
         _debugMessage = $"Attempting to send message as {senderUsername}.";
         StateHasChanged();
