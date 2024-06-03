@@ -122,7 +122,6 @@
       <None Include="Components\MyMudThemeProvider.razor" />
       <None Include="Components\Pages\Chat.razor" />
       <None Include="Components\Pages\Error.razor" />
-      <None Include="Components\Pages\Home.razor" />
       <None Include="Components\Pages\Login.razor" />
       <None Include="Components\Routes.razor" />
       <None Include="Components\_Imports.razor" />

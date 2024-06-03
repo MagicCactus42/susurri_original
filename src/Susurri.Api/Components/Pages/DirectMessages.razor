@@ -7,16 +7,14 @@
 @inject UserController UserController
 @inject ILogger<DirectMessages> Logger
 @using Susurri.Core.Abstractions
-@using Susurri.Core.Entities
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.Extensions.Options
-@using Susurri.Core.Exceptions
 @using Susurri.Infrastructure.Auth
-@using System.Net.Http.Headers
 @using Susurri.Api.Commands
 @using Susurri.Api.Controllers
-@using Susurri.Core.DTO
 @using System.ComponentModel.DataAnnotations
+@using Microsoft.IdentityModel.Tokens
+@using Susurri.Core.Exceptions
 @implements IAsyncDisposable
 
 <EditForm Model="@_loginModel" OnValidSubmit="OnValidLoginSubmit" FormName="">
@@ -103,77 +101,114 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!_isInitialized && _loggedIn)
+        if (firstRender && _loggedIn)
         {
-            Logger.LogInformation("First render and user is logged in.");
-            _debugMessage = "First render and user is logged in.";
+            await InitializeSignalRConnection();
+        }
+    }
 
-            if (Options == null || Options.Value == null)
-            {
-                Logger.LogError("Options or Options.Value is null.");
-                _debugMessage = "Options or Options.Value is null.";
-                throw new NullOptionsException();
-            }
+    private async Task InitializeSignalRConnection()
+    {
+        try
+        {
+            // Load messages from the database
+            await LoadMessagesFromDatabase();
 
-            var token = await LocalStorage.GetItemAsync<JwtDto>("token");
+            // Retrieve the JWT token from local storage
+            var token = await LocalStorage.GetItemAsync<string>("token");
 
             if (token is null)
             {
-                Logger.LogError("JWT token is null.");
-                _debugMessage = "JWT token is null.";
-                throw new EmptyJWTException();
+                Logger.LogWarning("JWT token is null. Cannot establish SignalR connection.");
+                return;
             }
 
-            var stringToken = token.ToString();
-            Logger.LogInformation("Token retrieved from local storage.");
-            _debugMessage = "Token retrieved from local storage.";
-
-            HttpClient httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", stringToken);
-
-            var hubUrl = Navigation.ToAbsoluteUri("/chathub").ToString();
-            Logger.LogInformation($"Hub URL: {hubUrl}");
-            _debugMessage = $"Hub URL: {hubUrl}";
-
+            // Create a new SignalR hub connection
             _hubConnection = new HubConnectionBuilder()
-                .WithUrl(hubUrl, options =>
+                .WithUrl(Navigation.ToAbsoluteUri("/chatHub"), options =>
                 {
-                    options.AccessTokenProvider = () => Task.FromResult(stringToken);
+                    options.AccessTokenProvider = () => Task.FromResult(token);
                 })
                 .Build();
 
-            Logger.LogInformation("Hub connection created.");
-
-            _hubConnection.On<string, string, string>("ReceiveMessage", async (senderUsername, recipientUsername, message) =>
+            // Handle incoming messages
+            _hubConnection.On<string, string, string>("ReceiveMessage", (sender, recipient, message) =>
             {
-                Logger.LogInformation($"Message received: {senderUsername} to {recipientUsername}: {message}");
-                _debugMessage = $"Message received: {senderUsername} to {recipientUsername}: {message}";
-                _messages.Add($"{senderUsername} to {recipientUsername}: {message}");
-                await InvokeAsync(StateHasChanged);
-                var dbMessage = new ChatMessage() { SenderUsername = senderUsername, RecipientUsername = recipientUsername, Content = message };
-                Context.ChatMessages.Add(dbMessage);
-                await Context.SaveChangesAsync();
+                var encodedMsg = $"{sender} to {recipient}: {message}";
+                _messages.Add(encodedMsg);
+                InvokeAsync(StateHasChanged);
             });
 
+            // Start the connection
+            await _hubConnection.StartAsync();
+
+            _isInitialized = true;
+            Logger.LogInformation("SignalR connection established successfully.");
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error initializing SignalR connection.");
+        }
+    }
+
+    private async Task LoadMessagesFromDatabase()
+    {
+        try
+        {
+            var dbMessages = await Context.ChatMessages.ToListAsync();
+            _messages.Clear();
+            if (_recipientUsername.IsNullOrEmpty())
+                return; 
+            foreach (var msg in dbMessages)
+            {
+                    var encodedMsg = $"{msg.SenderUsername} to {msg.RecipientUsername}: {msg.Content}";
+                    _messages.Add(encodedMsg);
+            }
+            Logger.LogInformation("Messages loaded from database successfully.");
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error loading messages from database.");
+        }
+    }
+
+    private async Task SendMessage()
+    {
+        if (_hubConnection is null)
+        {
+            Logger.LogWarning("Hub connection is null. Cannot send message.");
+            return;
+        }
+
+        var senderUsername = Options?.Value.UniqueName;
+
+        if (IsConnected && !string.IsNullOrEmpty(senderUsername) && !string.IsNullOrEmpty(_recipientUsername) && !string.IsNullOrEmpty(_message))
+        {
             try
             {
-                await _hubConnection.StartAsync();
-                Logger.LogInformation("Hub connection started.");
-                _debugMessage = "Hub connection started.";
+                await _hubConnection.SendAsync("SendMessage", senderUsername, _recipientUsername, _message);
+
+                // Clear the message box after sending
+                _message = string.Empty;
+                Logger.LogInformation("Message sent successfully.");
+                StateHasChanged();
             }
             catch (Exception ex)
             {
-                Logger.LogError($"Error starting hub connection: {ex.Message}");
-                _debugMessage = $"Error starting hub connection: {ex.Message}";
+                Logger.LogError(ex, "Error sending message.");
             }
+        }
+    }
 
-            await LoadMessagesFromDatabase();
-            Logger.LogInformation("Messages loaded from the database.");
-            _debugMessage = "Messages loaded from the database.";
+    private bool IsConnected => _hubConnection?.State == HubConnectionState.Connected;
 
-            _isInitialized = true;
-            StateHasChanged();
+    public async ValueTask DisposeAsync()
+    {
+        if (_hubConnection is not null)
+        {
+            await _hubConnection.DisposeAsync();
         }
     }
 
@@ -196,71 +231,7 @@
         await LocalStorage.SetItemAsync("token", token);
         _loggedIn = true;
         Logger.LogInformation("User logged in successfully.");
-        _debugMessage = "User logged in successfully.";
+        await InitializeSignalRConnection();  // Initialize SignalR connection after login
         StateHasChanged();
-    }
-
-    private async Task LoadMessagesFromDatabase()
-    {
-        Logger.LogInformation("Loading messages from the database.");
-        _debugMessage = "Loading messages from the database.";
-        var dbMessages = await Context.ChatMessages.ToListAsync();
-        foreach (var msg in dbMessages)
-        {
-            var encodedMsg = $"{msg.SenderUsername} to {msg.RecipientUsername}: {msg.Content}";
-            _messages.Add(encodedMsg);
-        }
-        Logger.LogInformation("Messages loaded from the database.");
-        _debugMessage = "Messages loaded from the database.";
-    }
-
-    private async Task SendMessage()
-    {
-        var senderUsername = Options?.Value.UniqueName;
-        Logger.LogInformation($"Attempting to send message as {senderUsername}.");
-        _debugMessage = $"Attempting to send message as {senderUsername}.";
-        StateHasChanged();
-
-        if (_hubConnection is null)
-        {
-            Logger.LogError("Hub connection is null.");
-            _debugMessage = "Hub connection is null.";
-            StateHasChanged();
-            return;
-        }
-
-        if (IsConnected && !string.IsNullOrEmpty(senderUsername) && !string.IsNullOrEmpty(_recipientUsername) && !string.IsNullOrEmpty(_message))
-        {
-            try
-            {
-                Logger.LogInformation($"Sending message to {_recipientUsername}: {_message}");
-                _debugMessage = $"Sending message to {_recipientUsername}: {_message}";
-                StateHasChanged();
-
-                await _hubConnection.SendAsync("SendMessage", senderUsername, _recipientUsername, _message);
-
-                _message = string.Empty;
-                Logger.LogInformation("Message sent successfully.");
-                _debugMessage = "Message sent successfully.";
-                StateHasChanged();
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError($"Error sending message: {ex.Message}");
-                _debugMessage = $"Error sending message: {ex.Message}";
-                StateHasChanged();
-            }
-        }
-    }
-
-    private bool IsConnected => _hubConnection?.State == HubConnectionState.Connected;
-
-    public async ValueTask DisposeAsync()
-    {
-        if (_hubConnection is not null)
-        {
-            Logger.LogInformation("Disposing hub connection.");
-            await _hubConnection.DisposeAsync();
-        }
     }
 }
