@@ -13,8 +13,8 @@
 @using Susurri.Api.Commands
 @using Susurri.Api.Controllers
 @using System.ComponentModel.DataAnnotations
+@using System.Net.Http.Headers
 @using Microsoft.IdentityModel.Tokens
-@using Susurri.Core.Exceptions
 @implements IAsyncDisposable
 
 <EditForm Model="@_loginModel" OnValidSubmit="OnValidLoginSubmit" FormName="">
@@ -103,55 +103,51 @@
     {
         if (firstRender && _loggedIn)
         {
-            await InitializeSignalRConnection();
-        }
-    }
-
-    private async Task InitializeSignalRConnection()
-    {
-        try
-        {
-            // Load messages from the database
-            await LoadMessagesFromDatabase();
-
-            // Retrieve the JWT token from local storage
-            var token = await LocalStorage.GetItemAsync<string>("token");
-
-            if (token is null)
+            try
             {
-                Logger.LogWarning("JWT token is null. Cannot establish SignalR connection.");
-                return;
-            }
+                // Load messages from the database
+                await LoadMessagesFromDatabase();
 
-            // Create a new SignalR hub connection
-            _hubConnection = new HubConnectionBuilder()
-                .WithUrl(Navigation.ToAbsoluteUri("/chatHub"), options =>
+                // Retrieve the JWT token from local storage
+                var token = await LocalStorage.GetItemAsync<string>("token");
+
+                if (token is null)
                 {
-                    options.AccessTokenProvider = () => Task.FromResult(token);
-                })
-                .Build();
+                    Logger.LogWarning("JWT token is null. Cannot establish SignalR connection.");
+                    return;
+                }
 
-            // Handle incoming messages
-            _hubConnection.On<string, string, string>("ReceiveMessage", (sender, recipient, message) =>
+                var httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", token);
+                
+                // Create a new SignalR hub connection
+                _hubConnection = new HubConnectionBuilder()
+                    .WithUrl(Navigation.ToAbsoluteUri("/chatHub"))
+                    .Build();
+
+                // Handle incoming messages
+                _hubConnection.On<string, string, string>("ReceiveMessage", (sender, recipient, message) =>
+                {
+                    var encodedMsg = $"{sender} to {recipient}: {message}";
+                    _messages.Add(encodedMsg);
+                    InvokeAsync(StateHasChanged);
+                });
+
+                // Start the connection
+                await _hubConnection.StartAsync();
+
+                _isInitialized = true;
+                Logger.LogInformation("SignalR connection established successfully.");
+                StateHasChanged();
+            }
+            catch (Exception ex)
             {
-                var encodedMsg = $"{sender} to {recipient}: {message}";
-                _messages.Add(encodedMsg);
-                InvokeAsync(StateHasChanged);
-            });
-
-            // Start the connection
-            await _hubConnection.StartAsync();
-
-            _isInitialized = true;
-            Logger.LogInformation("SignalR connection established successfully.");
-            StateHasChanged();
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex, "Error initializing SignalR connection.");
+                Logger.LogError(ex, "Error initializing SignalR connection.");
+            }
         }
     }
-
+    
     private async Task LoadMessagesFromDatabase()
     {
         try
@@ -188,7 +184,7 @@
         {
             try
             {
-                await _hubConnection.SendAsync("SendMessage", senderUsername, _recipientUsername, _message);
+                await _hubConnection.InvokeAsync("SendMessage", senderUsername, _recipientUsername, _message);
 
                 // Clear the message box after sending
                 _message = string.Empty;
@@ -231,7 +227,6 @@
         await LocalStorage.SetItemAsync("token", token);
         _loggedIn = true;
         Logger.LogInformation("User logged in successfully.");
-        await InitializeSignalRConnection();  // Initialize SignalR connection after login
         StateHasChanged();
     }
 }
