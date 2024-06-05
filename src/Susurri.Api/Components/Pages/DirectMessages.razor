@@ -6,6 +6,7 @@
 @inject ILocalStorageService LocalStorage
 @inject UserController UserController
 @inject ILogger<DirectMessages> Logger
+@inject ITokenStorage TokenStorage
 @using Susurri.Core.Abstractions
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.Extensions.Options
@@ -15,6 +16,8 @@
 @using System.ComponentModel.DataAnnotations
 @using System.Net.Http.Headers
 @using Microsoft.IdentityModel.Tokens
+@using Susurri.Application.Abstractions
+@using Susurri.Core.Entities
 @implements IAsyncDisposable
 
 <EditForm Model="@_loginModel" OnValidSubmit="OnValidLoginSubmit" FormName="">
@@ -101,40 +104,31 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && _loggedIn)
+        if (_loggedIn & !_isInitialized)
         {
             try
             {
-                // Load messages from the database
-                await LoadMessagesFromDatabase();
-
-                // Retrieve the JWT token from local storage
                 var token = await LocalStorage.GetItemAsync<string>("token");
-
-                if (token is null)
-                {
-                    Logger.LogWarning("JWT token is null. Cannot establish SignalR connection.");
-                    return;
-                }
-
-                var httpClient = new HttpClient();
-                httpClient.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("Bearer", token);
                 
-                // Create a new SignalR hub connection
                 _hubConnection = new HubConnectionBuilder()
-                    .WithUrl(Navigation.ToAbsoluteUri("/chatHub"))
+                    .WithUrl("https://localhost:7083/chatHub", options =>
+                    {
+                        options.AccessTokenProvider = () => Task.FromResult(token);
+                    })
                     .Build();
 
                 // Handle incoming messages
-                _hubConnection.On<string, string, string>("ReceiveMessage", (sender, recipient, message) =>
+                _hubConnection.On<string, string, string>("ReceiveMessage", async (sender, recipient, message) =>
                 {
                     var encodedMsg = $"{sender} to {recipient}: {message}";
                     _messages.Add(encodedMsg);
-                    InvokeAsync(StateHasChanged);
+                    await InvokeAsync(StateHasChanged);
+                    var databaseMessage = new ChatMessage() { SenderUsername = Options.Value.UniqueName, RecipientUsername = _recipientUsername, Content = message };
+                    Context.ChatMessages.Add(databaseMessage);
+                    await Context.SaveChangesAsync();
                 });
 
-                // Start the connection
+                await LoadMessagesFromDatabase();
                 await _hubConnection.StartAsync();
 
                 _isInitialized = true;
@@ -153,7 +147,6 @@
         try
         {
             var dbMessages = await Context.ChatMessages.ToListAsync();
-            _messages.Clear();
             if (_recipientUsername.IsNullOrEmpty())
                 return; 
             foreach (var msg in dbMessages)
@@ -223,10 +216,20 @@
     {
         var command = new SignIn(_loginModel.Username, _loginModel.Password);
         _successLogin = true;
-        var token = await UserController.Post(command);
-        await LocalStorage.SetItemAsync("token", token);
+        await UserController.Post(command);
+        
+        var anotherToken = TokenStorage.Get();
+        var stringToken2 = anotherToken.AccessToken;
+        await LocalStorage.SetItemAsync("token", stringToken2);
+        
+        var httpClient = new HttpClient();
+        httpClient.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", stringToken2);
+        
         _loggedIn = true;
+        
         Logger.LogInformation("User logged in successfully.");
+        
         StateHasChanged();
     }
 }
