@@ -33,6 +33,7 @@
                 </MudCardContent>
                 <MudCardActions>
                     <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Login</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ToggleStartButton" Disabled="startButton">Start</MudButton>
                 </MudCardActions>
             </MudCard>
         </MudItem>
@@ -96,70 +97,64 @@
     private HubConnection? _hubConnection;
     private string? _recipientUsername, _message;
     private readonly List<string> _messages = new();
-    private bool _isInitialized;
     readonly LoginAccountForm _loginModel = new();
-    private bool _successLogin;
-    private bool _loggedIn;
+    private bool _successLogin, _isInitialized, _loggedIn, startButton, _loaded;
     private string? _debugMessage;
+    
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (_loggedIn & !_isInitialized)
+        if (startButton)
         {
-            try
-            {
-                var token = await LocalStorage.GetItemAsync<string>("token");
-                
-                _hubConnection = new HubConnectionBuilder()
-                    .WithUrl("https://localhost:7083/chatHub", options =>
-                    {
-                        options.AccessTokenProvider = () => Task.FromResult(token);
-                    })
-                    .Build();
+            var token = await LocalStorage.GetItemAsync<string>("token");
 
-                // Handle incoming messages
-                _hubConnection.On<string, string, string>("ReceiveMessage", async (sender, recipient, message) =>
+            _hubConnection = new HubConnectionBuilder()
+                .WithUrl("https://localhost:7083/chatHub", options =>
                 {
-                    var encodedMsg = $"{sender} to {recipient}: {message}";
-                    _messages.Add(encodedMsg);
-                    await InvokeAsync(StateHasChanged);
-                    var databaseMessage = new ChatMessage() { SenderUsername = Options.Value.UniqueName, RecipientUsername = _recipientUsername, Content = message };
-                    Context.ChatMessages.Add(databaseMessage);
-                    await Context.SaveChangesAsync();
-                });
+                    options.AccessTokenProvider = () => Task.FromResult(token);
+                }).Build();
 
-                await LoadMessagesFromDatabase();
-                await _hubConnection.StartAsync();
-
-                _isInitialized = true;
-                Logger.LogInformation("SignalR connection established successfully.");
-                StateHasChanged();
-            }
-            catch (Exception ex)
+            // Handle incoming messages
+            _hubConnection.On<string, string, string>("ReceiveMessage", async (sender, recipient, message) =>
             {
-                Logger.LogError(ex, "Error initializing SignalR connection.");
-            }
+                var encodedMsg = $"{sender} to {recipient}: {message}";
+                _messages.Add(encodedMsg);
+                await InvokeAsync(StateHasChanged);
+                var databaseMessage = new ChatMessage() { SenderUsername = Options.Value.UniqueName, RecipientUsername = _recipientUsername, Content = message };
+                Context.ChatMessages.Add(databaseMessage);
+                await Context.SaveChangesAsync();
+            });
+            if (!_isInitialized)
+                await LoadMessagesFromDatabase();
+            
+            await _hubConnection.StartAsync();
+            _isInitialized = true;
         }
     }
+
+
     
     private async Task LoadMessagesFromDatabase()
     {
-        try
+        if (!_loaded)
         {
             var dbMessages = await Context.ChatMessages.ToListAsync();
-            if (_recipientUsername.IsNullOrEmpty())
-                return; 
             foreach (var msg in dbMessages)
             {
-                    var encodedMsg = $"{msg.SenderUsername} to {msg.RecipientUsername}: {msg.Content}";
+                string encodedMsg;
+                if (msg.RecipientUsername.IsNullOrEmpty())
+                {
+                    encodedMsg = "";
+                }
+                else
+                {
+                    encodedMsg = $"{msg.SenderUsername} to {msg.RecipientUsername}: {msg.Content}";
                     _messages.Add(encodedMsg);
+                }
             }
             Logger.LogInformation("Messages loaded from database successfully.");
             StateHasChanged();
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex, "Error loading messages from database.");
+            _loaded = true;
         }
     }
 
@@ -231,5 +226,10 @@
         Logger.LogInformation("User logged in successfully.");
         
         StateHasChanged();
+    }
+
+    private void ToggleStartButton()
+    {
+        startButton = true;
     }
 }
