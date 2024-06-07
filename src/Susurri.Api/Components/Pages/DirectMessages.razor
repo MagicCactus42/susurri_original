@@ -1,6 +1,5 @@
 @page "/dm"
 @rendermode InteractiveServer
-@inject NavigationManager Navigation
 @inject ISusurriDbContext Context
 @inject IOptions<AuthOptions> Options
 @inject ILocalStorageService LocalStorage
@@ -33,7 +32,7 @@
                 </MudCardContent>
                 <MudCardActions>
                     <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Login</MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ToggleStartButton" Disabled="startButton">Start</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ToggleStartButton" Disabled="_startButton">Start</MudButton>
                 </MudCardActions>
             </MudCard>
         </MudItem>
@@ -98,14 +97,15 @@
     private string? _recipientUsername, _message;
     private readonly List<string> _messages = new();
     readonly LoginAccountForm _loginModel = new();
-    private bool _successLogin, _isInitialized, _loggedIn, startButton, _loaded;
+    private bool _successLogin, _isInitialized, _loggedIn, _startButton, _loaded;
     private string? _debugMessage;
     
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (startButton)
+        if (_startButton)
         {
+            Logger.LogInformation("Start button clicked, initializing hub connection.");
             var token = await LocalStorage.GetItemAsync<string>("token");
 
             _hubConnection = new HubConnectionBuilder()
@@ -123,11 +123,16 @@
                 var databaseMessage = new ChatMessage() { SenderUsername = Options.Value.UniqueName, RecipientUsername = _recipientUsername, Content = message };
                 Context.ChatMessages.Add(databaseMessage);
                 await Context.SaveChangesAsync();
+                Logger.LogInformation("Received message from {Sender} to {Recipient}: {Message}", sender, recipient, message);
             });
             if (!_isInitialized)
+            {
+                Logger.LogInformation("Loading messages from database.");
                 await LoadMessagesFromDatabase();
+            }
             
             await _hubConnection.StartAsync();
+            Logger.LogInformation("Hub connection started.");
             _isInitialized = true;
         }
     }
@@ -138,11 +143,19 @@
     {
         if (!_loaded)
         {
+            var token1 = await LocalStorage.GetItemAsync<string>("token");
+            var senderUsername1 = JwtHelper.GetUsernameFromToken(token1);
+            Logger.LogInformation("Loading messages from database.");
             var dbMessages = await Context.ChatMessages.ToListAsync();
             foreach (var msg in dbMessages)
             {
                 string encodedMsg;
-                if (msg.RecipientUsername.IsNullOrEmpty())
+                if (msg.RecipientUsername.IsNullOrEmpty()) 
+                {
+                    encodedMsg = "";
+                }
+
+                if (msg.SenderUsername != senderUsername1 && msg.RecipientUsername != senderUsername1)
                 {
                     encodedMsg = "";
                 }
@@ -166,12 +179,14 @@
             return;
         }
 
-        var senderUsername = Options?.Value.UniqueName;
+        var token = await LocalStorage.GetItemAsync<string>("token");
+        var senderUsername = JwtHelper.GetUsernameFromToken(token);
 
         if (IsConnected && !string.IsNullOrEmpty(senderUsername) && !string.IsNullOrEmpty(_recipientUsername) && !string.IsNullOrEmpty(_message))
         {
             try
             {
+                Logger.LogInformation("Sending message from {Sender} to {Recipient}: {Message}", senderUsername, _recipientUsername, _message);
                 await _hubConnection.InvokeAsync("SendMessage", senderUsername, _recipientUsername, _message);
 
                 // Clear the message box after sending
@@ -184,6 +199,11 @@
                 Logger.LogError(ex, "Error sending message.");
             }
         }
+        else
+        {
+            Logger.LogWarning("Message not sent. Conditions not met: IsConnected: {IsConnected}, SenderUsername: {SenderUsername}, RecipientUsername: {RecipientUsername}, Message: {Message}",
+                IsConnected, senderUsername, _recipientUsername, _message);
+        }
     }
 
     private bool IsConnected => _hubConnection?.State == HubConnectionState.Connected;
@@ -193,6 +213,7 @@
         if (_hubConnection is not null)
         {
             await _hubConnection.DisposeAsync();
+            Logger.LogInformation("Hub connection disposed.");
         }
     }
 
@@ -209,6 +230,8 @@
 
     private async Task OnValidLoginSubmit(EditContext context)
     {
+        Logger.LogInformation("Login form submitted.");
+
         var command = new SignIn(_loginModel.Username, _loginModel.Password);
         _successLogin = true;
         await UserController.Post(command);
@@ -230,6 +253,7 @@
 
     private void ToggleStartButton()
     {
-        startButton = true;
+        _startButton = true;
+        Logger.LogInformation("Start button toggled: {StartButton}", _startButton);
     }
 }

@@ -2,22 +2,36 @@ using System.Security.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Susurri.Core.Abstractions;
+using Susurri.Core.Entities;
 
 namespace Susurri.Core.Hubs;
 
 [Authorize]
 public class ChatHub : Hub<IChatClient>
 {
-    public async Task SendMessage(string senderUsername,string recipientUsername, string message)
+    private readonly ISusurriDbContext _context;
+
+    public ChatHub(ISusurriDbContext context)
     {
-        await Clients.Client(recipientUsername).ReceiveMessage(senderUsername, message);
+        _context = context;
     }
 
-    public Task SendMessageToGroups(string senderUsername, string message, string groupName)
+    public async Task SendMessage(string sender, string recipient, string message)
     {
-        return Clients.Group(groupName).ReceiveMessage(senderUsername, message);
-    }
+        var chatMessage = new ChatMessage
+        {
+            SenderUsername = sender,
+            RecipientUsername = recipient,
+            Content = message
+        };
 
+        _context.ChatMessages.Add(chatMessage);
+        await _context.SaveChangesAsync();
+
+        await Clients.User(recipient).ReceiveMessage( sender, recipient, message);
+        await Clients.User(sender).ReceiveMessage(sender, recipient, message);
+    }
+    
     public override async Task OnConnectedAsync()
     {
         await Groups.AddToGroupAsync(Context.ConnectionId, "SignalR Users");
@@ -27,26 +41,5 @@ public class ChatHub : Hub<IChatClient>
     public override async Task OnDisconnectedAsync(Exception exception)
     {
         await base.OnDisconnectedAsync(exception);
-    }
-    public async Task AddToGroup(string username, string groupName)
-    {
-        var name = Context.User.Identity.Name;
-
-        if (string.IsNullOrWhiteSpace(name) || name != username)
-            throw new InvalidCredentialException();
-        
-        await Groups.AddToGroupAsync(name, groupName);
-        await Clients.Group(groupName).ReceiveMessage(groupName, $"{name} has joined the group {groupName}.");
-    }
-
-    public async Task RemoveFromGroup(string username, string groupName)
-    {
-        var name = Context.User.Identity.Name;
-
-        if (string.IsNullOrWhiteSpace(name) || name != username)
-            throw new InvalidCredentialException();
-        
-        await Groups.RemoveFromGroupAsync(name, groupName);
-        await Clients.Group(groupName).ReceiveMessage(groupName, $"{name} has left the group {groupName}.");
     }
 }
