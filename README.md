@@ -19,6 +19,8 @@ I started working on Susurri during the "100 commitów" competition organized by
 
 Unfortunately, I won't be able to deliver all the features I initially outlined for the project; I overestimated my capabilities. However, I will do my best to have the website up and running before the project's deadline, allowing users to at least send messages after logging in. After the "100 commitów" competition concludes, I will continue to develop Susurri, as it has become an enjoyable endeavor for me.
 
+Final thoughts: It is currently 7th of June and, I must unfortunately admit that I wasn't able to deliver all the features, including some of the most crucial ones like AES encryption and logging in using GnuPG keys. The main reason for this is primarily my lack of skills and thorough understanding of ASP.NET core and Blazor. Starting the project as a Blazor Server instead of Blazor WASM has led to issues with correctly implementing JWT, messages not automatically fetching from the database requiring page refresh, and inability to add interactive drawers. Nevertheless, I will deploy this website, and it should be operational by the evening of the 8th of June. 
+
 ## What features will it have?
 
 The list of features is not strict, some may be added or removed later in the project.
