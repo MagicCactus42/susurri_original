@@ -8,7 +8,7 @@ Anonymity is the key to honest communication,
 
 Most people don't appreciate anonymity before they lose it, and you only get to lose it once. Susurri will help you keep it as long as possible. Messages will be encrypted end-to-end using AES, and the login system will make sure no one will be able to access your account.
 
-![Logo](https://cdn.discordapp.com/attachments/663447127502094356/1245370086857113701/image.png?ex=665880c6&is=66572f46&hm=63bd4a5060653fbb25fd4f78016bfbc70b0e2b248f855f7da6970df3e51dc216&)
+![Logo](https://ibb.co/HdQb3fX)
 
 
 ## About me and the Susurri
