@@ -1,3 +1,16 @@
+# Susurri - Messenger web application with E2E encryption
+
+
+[![100 - commitow](https://img.shields.io/badge/100%20-commitow-lightgreen.svg)](https://100commitow.pl)
+
+[![NuGet Package](https://img.shields.io/badge/.NET%20-8.0-blue.svg)](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+
+Anonymity is the key to honest communication,
+
+Most people don't appreciate anonymity before they lose it, and you only get to lose it once. Susurri will help you keep it as long as possible. Messages will be encrypted end-to-end using AES, and the login system will make sure no one will be able to access your account.
+
+![Logo](https://i.imgur.com/f3JmDdd.png)
+
 
 ## About me and the Susurri
 
