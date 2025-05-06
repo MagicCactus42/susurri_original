@@ -11,6 +11,9 @@ Most people don't appreciate anonymity before they lose it, and you only get to 
 
 ![Logo](https://i.imgur.com/f3JmDdd.png)
 
+## Afterthoughts on Susurri
+
+I’ve made this repository public again. After nearly a year of learning .NET and working on other projects, I can clearly see that this was a big ball of mud. Still, it served as a valuable learning experience, and I'm grateful for the growth it helped me achieve as a developer.
 
 ## About me and the Susurri
 
